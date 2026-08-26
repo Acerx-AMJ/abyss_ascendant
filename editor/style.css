@@ -1,0 +1,95 @@
+html {
+   background-color: #222;
+}
+
+label, button, pre, p, select, input {
+   color: white;
+   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+   font-size: .9rem;
+}
+
+button, select, input {
+   color: black;
+}
+
+p {
+   font-size: small;
+   display: inline-block;
+   vertical-align: middle;
+}
+
+#container {
+   position: relative;
+   top: 15px;
+   left: 15px;
+   width: 0px;
+   height: 0px;
+   background-color: black;
+}
+
+.tile {
+   position: absolute;
+   width: 15px;
+   height: 15px;
+   user-select: none;
+   font-size: .66rem;
+   text-align: center;
+
+   background-color: #aaa;
+   color: purple;
+   border: .1mm solid black;
+   box-sizing: border-box;
+}
+
+.tile:hover {
+   border: .5mm solid #af0;
+   animation-delay: 300ms;
+   animation: loop 300ms ease-in-out infinite;
+}
+
+@keyframes loop {
+   0% {
+      border-color: #fa0;
+      color: #fa0;
+   }
+   50% {
+      border-color: #af0;
+      color: #af0;
+   }
+   100% {
+      border-color: #fa0;
+      color: #fa0;
+   }
+}
+
+#CO {
+   color: #ff0;
+}
+
+#PL {
+   color: #0af;
+}
+
+#NY {
+   color: #fa0;
+}
+
+#JA {
+   color: #af0;
+}
+
+#GA {
+   color: #a0f;
+}
+
+#OB {
+   background-color: #555;
+}
+
+#BR {
+   background-color: rgb(84, 57, 44);
+}
+
+#VB, #HB, #GL, #SE, #LU, #WA, #CH, #BS, #MI {
+   color: #f00;
+}

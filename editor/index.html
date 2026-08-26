@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Layout Editor</title>
+
+      <link rel="stylesheet" href="style.css">
+   </head>
+
+   <body>
+      <label for="sizeX">X size of the layout: </label>
+      <input type="number" id="sizeX" name="sizeX" min="1" max="48" step="1">
+
+      <label for="sizeY">Y size of the layout: </label>
+      <input type="number" id="sizeY" name="sizeY" min="1" max="32" step="1">
+
+      <label for="tileSelector">Select the tile type:</label>
+      <select id="tileSelector">
+         <option value="EM">Empty</option>
+         <option value="CO">Coin</option>
+         <option value="PL">Player</option>
+         <option value="NY">Nyx</option>
+         <option value="JA">Jake</option>
+         <option value="GA">Gabriel</option>
+         <option value="BR">Bricks</option>
+         <option value="OB">Obstacle</option>
+         <option value="MI">Mine</option>
+         <option value="VB">V bat</option>
+         <option value="HB">H bat</option>
+         <option value="GL">Glimmer</option>
+         <option value="SE">Seeker</option>
+         <option value="LU">Lurker</option>
+         <option value="WA">Wanderer</option>
+         <option value="CH">Chaser</option>
+         <option value="BS">Observer</option>
+         <option value="UN">Unknown</option>
+      </select>
+
+      <button id="generate">Click to generate the layout.</button>
+      <button id="save">Click to save the level.</button>
+
+      <button id="undo">Undo</button>
+      <button id="redo">Redo</button>
+      <button id="clear">Clear</button>
+      <p id="cord">X: 0, Y: 0, Type: UN</p>
+
+      <div id="container"></div>
+      
+      <br><hr>
+      <pre id="result">Result:</pre>
+
+      <hr>
+      <label for="load">Load a layout:</label>
+      <input type="text" id="load" name="load" placeholder="Input a layout.">
+      <button id="loadButton">Click to load the layout.</button>
+
+      <script src="script.js"></script>
+   </body>
+</html>
