@@ -108,7 +108,7 @@ void dressLevel(m_uint& map, const Vec2& size, const Vec2& player, uint16 enemie
       Vec2 target(rand() % size.x, rand() % size.y);
       uint8 count {};
 
-      while (map.at(target.y).at(target.x) != uint8(tileType::coin) || player.distanceTo(target) < 4)
+      while (map.at(target.y).at(target.x) != uint8(tileType::empty) || player.distanceTo(target) < 4)
       {
          target = Vec2(rand() % size.x, rand() % size.y);
          if (++count > 10) break;
@@ -163,7 +163,7 @@ Level generateEndless(PlayerData& data, uint64 score, bool pickedSave, vstr stri
    dressLevel(map, size, playerPos, enemyCount, coinCount, spawnRates, score);
    map.at(playerPos.y).at(playerPos.x) = uint8(tileType::player);
 
-   return Level(""s, size, 0, map, story.getStory(score), {}, {}, {{uint16(goal::getCoins)}}, data);
+   return Level(""s, size, 0, map, story.getStory(score), {{"$SKIP"}}, {{"$SKIP"}}, {{uint16(goal::getCoins)}}, data);
 }
 
 // Generate the daily level for today.

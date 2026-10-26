@@ -1,6 +1,7 @@
 #include "save.hpp"
 #include "io.hpp"
 
+#include <filesystem>
 #include <map>
 using std::map;
 
@@ -11,6 +12,7 @@ PlayerData::PlayerData(vstr name, vstr icon, vstr color, uint64 highScore, uint1
 // Create a new database and a new table if they do not exist yet.
 Save::Save()
 {
+   std::filesystem::create_directories("data/");
    if (sqlite3_open("data/save.db", &db)) 
    {
       println("Fatal error: Could not open save file: "s + sqlite3_errmsg(db), RED);

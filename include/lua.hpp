@@ -2,7 +2,7 @@
 #define AA_LUA_HPP
 
 #include "level.hpp"
-#include <lua5.1/lua.hpp>
+#include <lua-5.1/lua.hpp>
 
 // Lua class for opening and executing scripts.
 class Lua

@@ -55,7 +55,7 @@ public:
    void move(const Vec2&) override;
 
 private:
-   uint8 dir {1};
+   int dir {1};
 };
 
 // Horizontal bat moves horizontally, changing the direction on collision.
@@ -68,7 +68,7 @@ public:
    void move(const Vec2&) override;
 
 private:
-   uint8 dir {1};
+   int dir {1};
 };
 
 // Glimmer moves straight in a random direction on collision.
@@ -92,7 +92,7 @@ public:
    void move(const Vec2& player) override;
 
 private:
-   uint8 turn {};
+   int turn {};
 };
 
 // Chaser chases the player, but cannot move diagonally.
@@ -105,7 +105,7 @@ public:
    void move(const Vec2& player) override;
 
 private:
-   uint8 turn {};
+   int turn {};
 };
 
 // Lurker wanders around randomly and attacks the player if they're close.
@@ -118,7 +118,7 @@ public:
    void move(const Vec2& player) override;
 
 private:
-   uint8 turn {};
+   int turn {};
 };
 
 // Wanderer wanders randomly around the map.

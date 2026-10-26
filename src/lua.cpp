@@ -287,7 +287,7 @@ m_str Lua::getStory(uint64 score)
    }
 
    lua_pop(lua, 1);
-   return {{"SKIP"}};
+   return {{"$SKIP"}};
 }
 
 // Get the number of daily level layouts.

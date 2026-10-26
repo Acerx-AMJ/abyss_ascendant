@@ -1,7 +1,6 @@
 #include "entities.hpp"
 #include "io.hpp"
 #include <cstdlib>
-#include <ctime>
 
 // Create a brand new player class.
 Player::Player(LEVEL& level, const Vec2& pos)
@@ -94,7 +93,7 @@ void Enemy::moveTo(const Vec2& target)
 // Check if the target is in bounds and not on another enemy
 bool Enemy::canMove(const Vec2& target) const
 {
-   return level.getTile(target) < tileType::obstacle && level.withinBounds(target);
+   return level.getTile(target) < tileType::nyx && level.withinBounds(target);
 }
 
 // Move the given enemy based on its move pattern.

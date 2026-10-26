@@ -1,7 +1,6 @@
 #include "audio.hpp"
 #include <thread>
 #include <filesystem>
-#include <stdexcept>
 #include <random>
 #include <unordered_map>
 
@@ -28,8 +27,7 @@ void initAudio()
 // Play the give audio file
 void playSound(const str& identifier)
 {
-   if (!audioPool.contains(identifier))
-      throw std::runtime_error("Could not play sound '"s + identifier + "'."s);
+   if (!audioPool.contains(identifier)) return;
 
    sf::SoundBuffer& buffer = audioPool.at(identifier);
 
@@ -54,8 +52,7 @@ void playSound(const str& identifier)
 // Delay the given audio file
 void delaySound(const str& identifier)
 {
-   if (!audioPool.contains(identifier))
-      throw std::runtime_error("Could not play sound '"s + identifier + "'."s);
+   if (!audioPool.contains(identifier)) return;
 
    sf::Sound sound;
    sound.setBuffer(audioPool.at(identifier));
