@@ -4,10 +4,10 @@
 #include "io.hpp"
 
 // Constants for customization.
-v_str iconOptions {{"Smiley face: ☻"s, "Spade: ♠"s, "Club: ♣"s, "Heart: ♥"s, "Diamond: ♦"s, "Sun: ☀"s, "Cogwheel: ⚙"s, "Pawn: ♟"s, "Knight: ♞"s, "Queen: ♛"s, "King: ♔"s, "Rook: ♖"s, "Bishop: ♗"s, "Seeker: ◊"s}};
+v_str iconOptions {{"Block: []"s, "Elipsis: ()"s, "Curly: {}"s, "Money: $$"s, "Hash: ##"s, "Xs: XX"s, "Smiley face: ☻"s, "Spade: ♠"s, "Club: ♣"s, "Heart: ♥"s, "Diamond: ♦"s, "Sun: ☀"s, "Cogwheel: ⚙"s, "Pawn: ♟"s, "Knight: ♞"s, "Queen: ♛"s, "King: ♔"s, "Rook: ♖"s, "Bishop: ♗"s, "Seeker: ◊"s}};
 v_str colorOptions {{wrap("Pink"s, PINK), wrap("Red"s, RED), wrap("Orange"s, ORANGE), wrap("Yellow"s, YELLOW), wrap("Green"s, GREEN), wrap("Cyan"s, CYAN), wrap("Blue"s, BLUE), wrap("Purple"s, PURPLE), wrap("Brown"s, BROWN), wrap("Gray"s, GRAY), "White"s}};
 
-const v_str iconValues {{"☻"s, "♠"s, "♣"s, "♥"s, "♦"s, "☀"s, "⚙"s, "♟"s, "♞"s, "♛"s, "♔"s, "♖"s, "♗"s, "◊"s, "C"s}};
+const v_str iconValues {{"[]"s, "()"s, "{}"s, "$$"s, "##"s, "XX"s, "☻"s, "♠"s, "♣"s, "♥"s, "♦"s, "☀"s, "⚙"s, "♟"s, "♞"s, "♛"s, "♔"s, "♖"s, "♗"s, "◊"s, "C"s}};
 const v_str colorValues {{PINK, RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, PURPLE, BROWN, GRAY, ""s, "C"s}};
 
 // Let the user create a custom color.
