@@ -2,12 +2,15 @@
 #define AA_ENTITIES_HPP
 
 #include "tiles.hpp"
+#include "vec2.hpp"
+
+struct Level;
 
 // Player class for controlling the character.
 class Player
 {
 public:
-   Player(LEVEL& level, const Vec2& pos);
+   Player(Level& level, const Vec2& pos);
 
    // Move the player in the given direction if possible.
    void move(const Vec2& dir);
@@ -19,7 +22,7 @@ public:
    const Vec2& getPos() const;
 
 private:
-   LEVEL& level;
+   Level& level;
    Vec2 pos;
 };
 
@@ -27,13 +30,13 @@ private:
 class Enemy
 {
 public:
-   Enemy(LEVEL& level, const Vec2& pos, tileType type);
+   Enemy(Level& level, const Vec2& pos, tileType type);
 
    virtual ~Enemy() = default;
    virtual void move(const Vec2& player) = 0;
 
 protected:
-   LEVEL& level;
+   Level& level;
    Vec2 pos;
    tileType type, tile {tileType::empty};
 
@@ -49,7 +52,7 @@ protected:
 class VBat : public Enemy
 {
 public:
-   VBat(LEVEL& level, const Vec2& pos)
+   VBat(Level& level, const Vec2& pos)
       : Enemy(level, pos, tileType::vBat) {}
    
    void move(const Vec2&) override;
@@ -62,7 +65,7 @@ private:
 class HBat : public Enemy
 {
 public:
-   HBat(LEVEL& level, const Vec2& pos)
+   HBat(Level& level, const Vec2& pos)
       : Enemy(level, pos, tileType::hBat) {}
    
    void move(const Vec2&) override;
@@ -74,7 +77,7 @@ private:
 // Glimmer moves straight in a random direction on collision.
 class Glimmer : public Enemy{
 public:
-   Glimmer(LEVEL& level, const Vec2& pos)
+   Glimmer(Level& level, const Vec2& pos)
       : Enemy(level, pos, tileType::glimmer) {}
 
    void move(const Vec2&) override;
@@ -86,7 +89,7 @@ private:
 // Seeker slowly chases the player.
 class Seeker : public Enemy{
 public:
-   Seeker(LEVEL& level, const Vec2& pos)
+   Seeker(Level& level, const Vec2& pos)
       : Enemy(level, pos, tileType::seeker) {}
    
    void move(const Vec2& player) override;
@@ -99,7 +102,7 @@ private:
 class Chaser : public Enemy
 {
 public:
-   Chaser(LEVEL& level, const Vec2& pos)
+   Chaser(Level& level, const Vec2& pos)
       : Enemy(level, pos, tileType::chaser) {}
    
    void move(const Vec2& player) override;
@@ -112,7 +115,7 @@ private:
 class Lurker : public Enemy
 {
 public:
-   Lurker(LEVEL& level, const Vec2& pos)
+   Lurker(Level& level, const Vec2& pos)
       : Enemy(level, pos, tileType::lurker) {}
    
    void move(const Vec2& player) override;
@@ -125,7 +128,7 @@ private:
 class Wanderer : public Enemy
 {
 public:
-   Wanderer(LEVEL& level, const Vec2& pos)
+   Wanderer(Level& level, const Vec2& pos)
       : Enemy(level, pos, tileType::wanderer) {}
    
    void move(const Vec2&) override;
@@ -135,7 +138,7 @@ public:
 class Observer : public Enemy
 {
 public:
-   Observer(LEVEL& level, const Vec2& pos)
+   Observer(Level& level, const Vec2& pos)
       : Enemy(level, pos, tileType::observer) {}
    
    void move(const Vec2& player) override;

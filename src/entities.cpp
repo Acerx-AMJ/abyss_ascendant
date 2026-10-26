@@ -1,9 +1,10 @@
 #include "entities.hpp"
 #include "io.hpp"
+#include "level.hpp"
 #include <cstdlib>
 
 // Create a brand new player class.
-Player::Player(LEVEL& level, const Vec2& pos)
+Player::Player(Level& level, const Vec2& pos)
    : level(level), pos(pos)
 {
    level.setTile(pos, tileType::player);
@@ -68,7 +69,7 @@ const Vec2& Player::getPos() const
 }
 
 // Create a new enemy.
-Enemy::Enemy(LEVEL& level, const Vec2& pos, tileType type)
+Enemy::Enemy(Level& level, const Vec2& pos, tileType type)
    : level(level), pos(pos), type(type)
 {
    level.setTile(pos, type);
