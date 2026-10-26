@@ -43,6 +43,7 @@ GET_HIT    = 10
 
 -- Tiles used in the map editor.
 UN = -1 -- this will overflow and print as '??' in the game.
+EM = 0
 CO = 1
 PL = 2
 NY = 3
@@ -103,18 +104,9 @@ AETHER      = Wrap("Aether", CYAN)
 CALIGO_ST   = Wrap("???", BLACK)
 CALIGO      = Wrap("Caligo", BLACK)
 
-AVARION     = Wrap("Avarion", RED)
-
-GOD         = Wrap("God", YELLOW)
-GODS        = Wrap("Gods", YELLOW)
-WORLD       = Wrap("World", YELLOW)
-FRAGMENT    = Wrap("Fragment", YELLOW)
-FRAGMENTS   = Wrap("Fragments", YELLOW)
-
-CATASTROPHE = Wrap("Catastrophe", RED)
-HELL        = Wrap("Hell", RED)
 ABYSS       = Wrap("Abyss", RED)
 WRAITHS     = Wrap("Wraiths", RED)
+WRAITH      = Wrap("Wraith", RED)
 BATS        = Wrap("Bats", RED)
 GLIMMERS    = Wrap("Glimmers", RED)
 SEEKERS     = Wrap("Seekers", RED)
@@ -125,5 +117,5 @@ OBSERVERS   = Wrap("Observers", RED)
 MINES       = Wrap("Mines", RED)
 
 -- This will be replaced in dialogue by the player's / narrator's name.
-PLR        = "$PLR"
-NARRATOR   = "$NAR"
+PLR = "$PLR"
+NAR = "$NAR"
