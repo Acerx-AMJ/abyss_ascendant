@@ -4,9 +4,9 @@ dofile("script/variables.lua")
 -- All of the chapters used in the game.
 Chapters = {
    {
-      name = "Abyss Ascendant",
+      name = "The Hotel",
       from = 1,
-      to = 8,
+      to = 80,
    },
 }
 
@@ -112,5 +112,147 @@ Levels = {
       },
       death = {{SKIP}},
       goal = {{COINS}, {ABOVE_X, 23}},
+   },
+   {
+      name = "First Encounter",
+      layout = {
+         {OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB},
+         {EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM},
+         {EM,EM,EM,EM,EM,EM,CO,EM,BR,OB,EM,EM,EM,EM,CO,EM,BR,BR,EM,OB,EM,EM,EM,EM},
+         {EM,EM,EM,EM,EM,OB,OB,OB,OB,OB,EM,EM,EM,OB,OB,OB,OB,OB,OB,OB,EM,EM,EM,EM},
+         {OB,OB,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM},
+         {OB,OB,EM,EM,EM,EM,EM,EM,EM,EM,CO,EM,EM,EM,EM,MI,EM,EM,EM,CO,EM,EM,EM,EM},
+         {OB,OB,EM,EM,EM,EM,CO,EM,EM,EM,EM,EM,EM,MI,BR,BR,EM,EM,EM,EM,EM,EM,EM,EM},
+         {EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,BR,BR,BR,MI,EM,EM,EM,EM,EM,EM,EM},
+         {EM,EM,EM,CO,EM,EM,EM,EM,EM,EM,EM,EM,MI,BR,BR,BR,BR,EM,EM,EM,EM,EM,CO,EM},
+         {PL,EM,EM,EM,EM,EM,EM,MI,EM,EM,EM,EM,BR,BR,BR,MI,MI,EM,EM,EM,EM,EM,EM,EM},
+         {NY,EM,EM,EM,EM,EM,EM,EM,EM,CO,EM,MI,BR,BR,BR,EM,EM,EM,CO,EM,EM,EM,EM,EM},
+         {EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,MI,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM},
+         {EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM},
+         {EM,EM,EM,EM,MI,MI,EM,EM,MI,EM,EM,EM,EM,CO,EM,EM,OB,OB,OB,OB,OB,EM,EM,EM},
+         {EM,EM,EM,BR,BR,BR,BR,BR,BR,BR,EM,EM,EM,EM,OB,OB,OB,OB,OB,OB,OB,OB,OB,EM},
+         {OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB},
+      },
+
+      intro = {
+         {"What's that?", PLR},
+         {"That's... Oh. Those are " .. WRAITHS .. ".", NYX},
+         {"Looks like those are your people there.", NYX},
+         {"Oh...", PLR},
+         {"Don't touch them, okay?", NYX},
+      },
+
+      outro = {
+         {"Alright, there it is!", NYX},
+         {"Let's go!", NYX},
+      },
+
+      death = {
+         {PLR .. "!", NYX},
+         {"Are you okay?", NYX},
+         {TWO, NYX, "Yes.", "No!",
+            "Well, then get up!", "Come on, we don't have that much time!"},
+      },
+
+      goal = {{COINS}, {ABOVE_X, 23}},
+   },
+   {
+      name = "Entrance",
+      layout = {
+         {OB,EM,EM,EM,EM,OB,EM,EM,EM,EM,EM,EM,OB,EM,EM,OB},
+         {OB,EM,EM,EM,EM,OB,EM,EM,EM,EM,EM,EM,OB,EM,EM,OB},
+         {OB,EM,EM,EM,EM,OB,EM,EM,EM,EM,EM,EM,OB,OB,OB,OB},
+         {OB,EM,EM,EM,EM,OB,EM,EM,EM,EM,EM,EM,EM,EM,EM,OB},
+         {OB,EM,EM,EM,EM,OB,EM,EM,EM,EM,EM,EM,EM,EM,EM,OB},
+         {OB,EM,EM,EM,EM,OB,EM,EM,EM,EM,EM,EM,EM,EM,EM,OB},
+         {OB,OB,OB,OB,OB,OB,BR,BR,BR,BR,OB,OB,OB,OB,OB,OB},
+         {EM,BR,BR,EM,BR,MI,EM,EM,CO,EM,BS,EM,BR,MI,BR,BR},
+         {MI,BR,BR,MI,EM,EM,BS,EM,EM,EM,EM,EM,MI,EM,EM,BR},
+         {EM,EM,EM,EM,EM,EM,EM,EM,EM,CO,EM,EM,EM,EM,EM,MI},
+         {EM,MI,EM,EM,EM,MI,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM},
+         {EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,CO,EM,EM,EM,EM},
+         {EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM},
+         {EM,EM,EM,EM,EM,EM,EM,EM,EM,CO,EM,EM,EM,EM,MI,EM},
+         {EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM,EM},
+         {EM,EM,EM,EM,EM,EM,EM,PL,EM,NY,EM,EM,EM,EM,EM,EM},
+      },
+
+      intro = {
+         {"Where are the supplies?", PLR},
+         {"Somewhere on the roof.", NYX},
+         {"And how many floors are there?", PLR},
+         {"Five.", NYX},
+         {"I hope it's not filled with " .. WRAITHS .. "!", PLR},
+         {"Oh, it probably is.", NYX},
+         {"But see those two tall " .. WRAITHS .. "?", NYX},
+         {"Unlike these " .. MINES .. " they start chasing you when you get close.", NYX},
+         {"But we need to get inside...", NYX},
+         {"So figure something out!", NYX},
+         {"Why me?", PLR},
+         {"Go!", NYX},
+      },
+
+      outro = {
+         {"Wow, that was close...", NYX},
+         {"Sure was!", PLR},
+         {"Uhh, " .. NYX .. "?", PLR},
+         {"What are those?", PLR},
+         {"Stop being such a pussy!", NYX},
+      },
+
+      death = {
+         {"Fall back!", NYX},
+         {"Be more careful, okay?", NYX},
+         {"Easier said than done!", PLR},
+         {"Ugh. There must be a way to get through them.", NYX},
+      },
+
+      goal = {{COINS}, {ABOVE_Y, 9}},
+   },
+   {
+      name = "Uninvited Guest",
+      layout = {
+         {OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB},
+         {OB,BR,BR,MI,EM,EM,EM,EM,EM,EM,EM,BR,BR,BR,BR,OB},
+         {OB,BR,BR,EM,EM,EM,EM,CO,EM,EM,EM,BR,BR,BR,BR,OB},
+         {OB,BR,BR,CO,EM,OB,EM,EM,EM,EM,MI,BR,BR,BR,BR,OB},
+         {OB,BR,BR,EM,BR,OB,VB,EM,EM,EM,OB,OB,OB,OB,OB,OB},
+         {OB,MI,EM,EM,MI,OB,EM,EM,CO,EM,HB,EM,CO,EM,EM,OB},
+         {OB,EM,EM,EM,BR,OB,EM,EM,EM,BR,BR,EM,EM,EM,EM,OB},
+         {OB,OB,OB,OB,OB,OB,EM,EM,EM,BR,BR,CO,OB,MI,CO,OB},
+         {OB,BR,BR,EM,MI,OB,EM,EM,EM,MI,EM,EM,OB,BR,EM,OB},
+         {OB,BR,BR,EM,EM,EM,EM,EM,EM,BR,EM,EM,OB,BR,EM,OB},
+         {OB,EM,EM,CO,EM,EM,CO,EM,EM,EM,CO,EM,OB,BR,MI,OB},
+         {OB,EM,EM,EM,HB,OB,EM,EM,EM,EM,EM,EM,OB,OB,OB,OB},
+         {OB,EM,CO,EM,EM,OB,EM,EM,CO,EM,EM,VB,BR,BR,BR,OB},
+         {OB,BR,BR,BR,EM,OB,EM,EM,EM,EM,EM,EM,EM,EM,BR,OB},
+         {OB,BR,BR,BR,MI,OB,EM,NY,PL,EM,EM,EM,BR,MI,BR,OB},
+         {OB,OB,OB,OB,OB,OB,BR,BR,BR,BR,OB,OB,OB,OB,OB,OB},
+      },
+
+      intro = {
+         {"What are they, " .. NYX .. "??", PLR},
+         {BATS .. ".", NYX},
+         {"They can't see you. What are you even scared from?", NYX},
+         {"I've never seen such beasts before...", PLR},
+         {"Well, then get used to it.", NYX},
+         {"Let's go!", NYX},
+      },
+
+      outro = {
+         {"Alright, first floor done. Only four more to go.", NYX},
+         {"Only!", PLR},
+         {"Come on, it's not that bad.", NYX},
+         {"Oh, looks like the staircase is barricaded.", NYX},
+         {"Well...", NYX},
+      },
+
+      death = {
+         {"Stop slowing me down!", NYX},
+         {"Get up!", NYX},
+         {"I'm trying!", PLR},
+      },
+
+      goal = {{COINS}, {AREA, 11, 2, 11, 4}},
    },
 }
