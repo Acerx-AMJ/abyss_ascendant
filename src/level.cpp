@@ -41,6 +41,7 @@ Level::Level(
          case tileType::wanderer: enemies.push_back(std::make_unique<Wanderer>(*this, Vec2(x, y))); break;
          case tileType::chaser:   enemies.push_back(std::make_unique<Chaser>(*this, Vec2(x, y)));   break;
          case tileType::observer: enemies.push_back(std::make_unique<Observer>(*this, Vec2(x, y))); break;
+         case tileType::hunter:   enemies.push_back(std::make_unique<Hunter>(*this, Vec2(x, y)));   break;
          default: break;
          }
       }
@@ -119,8 +120,8 @@ bool Level::won(const Vec2& pos)
       case goal::turns:      if (turn > cond.at(1))       return false; break;
       case goal::aboveX:     if (pos.x <= cond.at(1) - 1) return false; break;
       case goal::aboveY:     if (pos.y >= cond.at(1) - 1) return false; break;
-      case goal::bellowX:    if (pos.x >= cond.at(1) - 1) return false; break;
-      case goal::bellowY:    if (pos.y <= cond.at(1) - 1) return false; break;
+      case goal::belowX:    if (pos.x >= cond.at(1) - 1) return false; break;
+      case goal::belowY:    if (pos.y <= cond.at(1) - 1) return false; break;
 
       case goal::point:  if (pos != Vec2(cond.at(1) - 1, cond.at(2) - 1)) return false; break;
       case goal::area:   if (!pos.within(Vec2(cond.at(1) - 1, cond.at(2) - 1), Vec2(cond.at(3) - 1, cond.at(4) - 1))) return false; break;
@@ -270,13 +271,13 @@ void Level::printConditions(const Vec2& pos)
          valid = pos.y <= cond.at(1) - 2;
          info = "Be above Y "s + tostr(cond.at(1));
          break;
-      case goal::bellowX:
+      case goal::belowX:
          valid = pos.x <= cond.at(1) - 2;
-         info = "Be bellow X "s + tostr(cond.at(1));
+         info = "Be below X "s + tostr(cond.at(1));
          break;
-      case goal::bellowY:
+      case goal::belowY:
          valid = pos.y >= cond.at(1);
-         info = "Be bellow Y "s + tostr(cond.at(1));
+         info = "Be below Y "s + tostr(cond.at(1));
          break;
       case goal::point:
          valid = pos == Vec2(cond.at(1) - 1, cond.at(2) - 1);
@@ -335,6 +336,7 @@ void Level::printMap(const Vec2& pos)
          case tileType::wanderer: print(" ✡"s, RED); break;
          case tileType::chaser:   print(" ●"s, RED); break;
          case tileType::observer: print(" ⍙"s, RED); break;
+         case tileType::hunter:   print(" @"s, RED); break;
          case tileType::mine:     print(" ✸"s, RED); break;
          case tileType::death:    print(" ✖"s, RED); break;
          default:                 print("??"s, PURPLE); break;

@@ -262,6 +262,7 @@ function getFullName(tile)
    case "WA": return "✡";
    case "CH": return "●";
    case "BS": return "⍙";
+   case "HU": return "@";
    case "MI": return "✸";
    default: return "??";
    }

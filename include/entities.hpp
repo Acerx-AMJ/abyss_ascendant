@@ -144,4 +144,17 @@ public:
    void move(const Vec2& player) override;
 };
 
+// Hunter is a more aggressive version of seeker
+class Hunter : public Enemy
+{
+public:
+   Hunter(Level &level, const Vec2 &pos)
+      : Enemy(level, pos, tileType::hunter) {}
+   
+   void move(const Vec2 &player) override;
+
+private:
+   int turn {};
+};
+
 #endif // AA_ENTITIES_HPP

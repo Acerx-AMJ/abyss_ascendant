@@ -35,8 +35,8 @@ POINT      = 2
 AREA       = 3
 ABOVE_X    = 4
 ABOVE_Y    = 5
-BELLOW_X   = 6
-BELLOW_Y   = 7
+BELOW_X   = 6
+BELOW_Y   = 7
 TURNS      = 8
 SURVIVE    = 9
 GET_HIT    = 10
@@ -59,7 +59,8 @@ LU = 12
 WA = 13
 CH = 14
 BS = 15
-MI = 16
+HU = 16
+MI = 17
 
 H_BAT    = HB
 V_BAT    = VB
@@ -69,6 +70,7 @@ LURKER   = LU
 WANDERER = WA
 CHASER   = CH
 OBSERVER = BS
+HUNTER   = HU
 MINE     = MI
 
 -- You can make your own colors like this: "\027[38;2;" + RED VALUE + ";" + GREEN_VALUE
@@ -114,6 +116,7 @@ CHASERS     = Wrap("Chasers", RED)
 LURKERS     = Wrap("Lurkers", RED)
 WANDERERS   = Wrap("Wanderers", RED)
 OBSERVERS   = Wrap("Observers", RED)
+HUNTERS     = Wrap("Hunters", RED)
 MINES       = Wrap("Mines", RED)
 
 -- This will be replaced in dialogue by the player's / narrator's name.

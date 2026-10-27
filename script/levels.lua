@@ -210,7 +210,7 @@ Levels = {
       goal = {{COINS}, {ABOVE_Y, 9}},
    },
    {
-      name = "Uninvited Guest",
+      name = "First Floor",
       layout = {
          {OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB},
          {OB,BR,BR,MI,EM,EM,EM,EM,EM,EM,EM,BR,BR,BR,BR,OB},
@@ -254,5 +254,55 @@ Levels = {
       },
 
       goal = {{COINS}, {AREA, 11, 2, 11, 4}},
+   },
+   {
+      name = "Uninvited Guest",
+      layout = {
+         {OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB,OB},
+         {OB,BR,BR,MI,EM,EM,VB,EM,EM,EM,HU,BR,BR,BR,BR,OB},
+         {OB,BR,BR,EM,EM,EM,EM,EM,EM,EM,EM,BR,BR,BR,BR,OB},
+         {OB,BR,BR,EM,EM,OB,EM,EM,PL,EM,MI,BR,BR,BR,BR,OB},
+         {OB,BR,BR,EM,BR,OB,EM,EM,EM,EM,OB,OB,OB,OB,OB,OB},
+         {OB,MI,EM,EM,MI,OB,EM,EM,EM,EM,EM,EM,EM,EM,EM,OB},
+         {OB,EM,EM,EM,BR,OB,EM,EM,HB,BR,BR,EM,EM,EM,EM,OB},
+         {OB,OB,OB,OB,OB,OB,EM,EM,EM,BR,BR,EM,OB,MI,EM,OB},
+         {OB,BR,BR,EM,MI,OB,EM,EM,EM,MI,EM,EM,OB,BR,EM,OB},
+         {OB,BR,BR,EM,EM,EM,EM,EM,EM,BR,EM,VB,OB,BR,EM,OB},
+         {OB,EM,EM,EM,EM,EM,EM,EM,MI,EM,EM,EM,OB,BR,MI,OB},
+         {OB,EM,HB,EM,EM,OB,EM,EM,EM,EM,EM,EM,OB,OB,OB,OB},
+         {OB,EM,EM,EM,EM,OB,EM,EM,EM,EM,EM,EM,BR,BR,BR,OB},
+         {OB,BR,BR,BR,EM,OB,EM,EM,EM,EM,EM,EM,EM,EM,BR,OB},
+         {OB,BR,BR,BR,MI,OB,EM,EM,NY,EM,EM,EM,BR,MI,BR,OB},
+         {OB,OB,OB,OB,OB,OB,BR,BR,BR,BR,OB,OB,OB,OB,OB,OB},
+      },
+
+      intro = {
+         {"What do we do about the barricades?", PLR},
+         {"Fuck! I don't have my saw with me!", NYX},
+         {"Maybe there's a different way?", PLR},
+         {"A razor-sharp spike pierced through the barricades.", NAR},
+         {"What the fuck?", PLR},
+         {"And another.", NAR},
+         {"What is that?", NYX},
+         {"And the third one.", NAR},
+         {PLR .. ", RUN!", NYX},
+         {"Suddenly, the barricades got annihilated and a massive " .. WRAITH .. " emerged.", NAR},
+         {"It screeched and started chasing " .. PLR .. " and " .. NYX .. ".", NAR},
+      },
+
+      outro = {
+         {"What the fuck do we do?", PLR},
+         {"Just run!", NYX},
+         {"To where?", PLR},
+         {"It doesn't matter!", NYX},
+         {"It kept pursuing them outside of the hotel.", NAR},
+      },
+
+      death = {
+         {"Fuck!", PLR},
+         {"Maybe there's a different way?", NYX},
+      },
+
+      goal = {{TURNS, 15}, {BELOW_Y, 14}},
    },
 }

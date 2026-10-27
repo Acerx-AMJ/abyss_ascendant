@@ -271,3 +271,32 @@ void Observer::move(const Vec2& player)
    if (target != pos) 
       moveTo(target);
 }
+
+void Hunter::move(const Vec2 &player)
+{
+   if (++turn % 4 == 0) return;
+   Vec2 dir;
+
+   // Calculate the direction in which the seeker should move.
+   if (player.x > pos.x)
+      dir.x = 1;
+   else if (player.x < pos.x) 
+      dir.x = -1;
+
+   if (player.y > pos.y) 
+      dir.y = 1;
+   else if (player.y < pos.y)
+      dir.y = -1;
+
+   Vec2 target {pos + dir};
+
+   // Handle collision with obstacles.
+   if (!canMove(target) && dir.x != 0 && canMove(pos.addX(dir.x))) 
+      target.y = pos.y;
+   else if (!canMove(target) && dir.y != 0 && canMove(pos.addY(dir.y))) 
+      target.x = pos.x;
+   else if (!canMove(target)) 
+      return;
+
+   moveTo(target);
+}

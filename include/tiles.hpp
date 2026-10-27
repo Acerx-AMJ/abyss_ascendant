@@ -20,8 +20,9 @@ enum class tileType : char
   wanderer,
   chaser,
   observer,
+  hunter,
   mine,
-  death
+  death,
 };
 
 #endif // AA_TILES_HPP

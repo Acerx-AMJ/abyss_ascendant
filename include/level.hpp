@@ -6,7 +6,7 @@
 #include <memory>
 
 // Enums for handling levels.
-enum class goal      : uint8 {getCoins, someCoins, point, area, aboveX, aboveY, bellowX, bellowY, turns, survive, getHit};
+enum class goal      : uint8 {getCoins, someCoins, point, area, aboveX, aboveY, belowX, belowY, turns, survive, getHit};
 enum class storyType : uint8 {intro, outro, death};
 enum class endState  : uint8 {won, lost, quit};
 
