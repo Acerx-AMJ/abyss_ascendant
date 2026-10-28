@@ -1,68 +1,40 @@
 #include "audio.hpp"
-#include <thread>
+#include <SFML/Audio.hpp>
 #include <filesystem>
+#include <list>
 #include <random>
 #include <unordered_map>
 
-// Buffer storage
 static std::unordered_map<std::string, sf::SoundBuffer> audioPool;
+static std::list<sf::Sound> activeSounds;
 
-// Initialize the audio
-void initAudio()
-{
-   for (const auto& file : std::filesystem::directory_iterator("sounds/"))
-   {
-      if (file.is_regular_file() && file.path().extension() == ".wav")
-      {
-         sf::SoundBuffer buffer;
+void initAudio() {
+   for (const auto &file: std::filesystem::directory_iterator("sounds/")) {
+      if (!file.is_regular_file() || file.path().extension() != ".wav") {
+         continue;
+      }
 
-         if (buffer.loadFromFile(file.path().string()))
-            audioPool.insert({file.path().stem(), buffer});
+      sf::SoundBuffer buffer;
+      if (buffer.loadFromFile(file.path().string())) {
+         audioPool.insert({file.path().stem(), buffer});
       }
    }
 }
 
-// Play the give audio file
-void playSound(const std::string& identifier)
-{
-   if (!audioPool.contains(identifier)) return;
+void playSound(const std::string &identifier) {
+   auto it = audioPool.find(identifier);
+   if (it == audioPool.end()) {
+      return;
+   }
 
-   sf::SoundBuffer& buffer = audioPool.at(identifier);
+   activeSounds.remove_if([](const sf::Sound &s) -> bool {
+      return s.getStatus() == sf::Sound::Stopped;
+   });
 
-   std::thread([&buffer]()
-   {
-      sf::Sound sound;
-      sound.setBuffer(buffer);
+   static thread_local std::mt19937 rng(std::random_device{}());
+   std::uniform_real_distribution<float> dist(0.75f, 1.25f);
 
-      static thread_local std::random_device rd;
-      static thread_local std::mt19937 generator(rd());
-      std::uniform_real_distribution<float> dist(.75f, 1.25f);
-
-      sound.setPitch(dist(generator));
-      sound.play();
-
-      // Delay the sound to let it play.
-      while (sound.getStatus() == sf::Sound::Playing)
-         sf::sleep(sf::milliseconds(100));
-   }).detach();
-}
-
-// Delay the given audio file
-void delaySound(const std::string& identifier)
-{
-   if (!audioPool.contains(identifier)) return;
-
-   sf::Sound sound;
-   sound.setBuffer(audioPool.at(identifier));
-
-   static thread_local std::random_device rd;
-   static thread_local std::mt19937 generator(rd());
-   std::uniform_real_distribution<float> dist(.75f, 1.25f);
-
-   sound.setPitch(dist(generator));
-   sound.play();
-
-   // Delay the sound to let it play.
-   while (sound.getStatus() == sf::Sound::Playing)
-      sf::sleep(sf::milliseconds(100));
+   activeSounds.emplace_back(it->second);
+   activeSounds.back().setPitch(dist(rng));
+   activeSounds.back().play();
 }

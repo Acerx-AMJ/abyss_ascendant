@@ -2,7 +2,6 @@
 #include "io.hpp"
 #include "audio.hpp"
 #include "algorithms.hpp"
-#include <sstream>
 #include <thread>
 
 // Spawn rates for the endless mode.
@@ -11,50 +10,56 @@ const std::vector<std::pair<int, int>> spawnRates {{
 }};
 
 // Convert a map to string for saving purposes.
-std::string mapToString(const std::vector<std::vector<int>>& map)
-{
-   std::stringstream stream;
+std::string mapToString(const std::vector<std::vector<int>> &map) {
+   std::string result;
+   result.reserve(map.size() * (map.empty() ? 1 : map[0].size() + 1));
 
-   for (const auto& row : map)
-   {
-      for (const auto& tile : row)
-      {
-         switch (static_cast<tileType>(tile)) 
-         {
-         case tileType::empty:    stream << "E"; break;
-         case tileType::coin:     stream << "C"; break;
-         case tileType::player:   stream << "P"; break;
-         case tileType::obstacle: stream << "O"; break;
-         case tileType::vBat:     stream << "V"; break;
-         case tileType::hBat:     stream << "H"; break;
-         case tileType::glimmer:  stream << "G"; break;
-         case tileType::seeker:   stream << "S"; break;
-         case tileType::lurker:   stream << "L"; break;
-         case tileType::wanderer: stream << "W"; break;
-         case tileType::chaser:   stream << "R"; break;
-         case tileType::observer: stream << "0"; break;
-         case tileType::mine:     stream << "M"; break;
-         default:                 stream << "?"; break;
+   for (const std::vector<int> &row: map) {
+      for (int t: row) {
+         tileType tile = (tileType)t;
+         
+         switch (tile) {
+         case tileType::empty:    result.push_back('E'); break;
+         case tileType::coin:     result.push_back('C'); break;
+         case tileType::player:   result.push_back('P'); break;
+         case tileType::nyx:      result.push_back('N'); break;
+         case tileType::jake:     result.push_back('J'); break;
+         case tileType::gabriel:  result.push_back('g'); break;
+         case tileType::bricks:   result.push_back('B'); break;
+         case tileType::obstacle: result.push_back('O'); break;
+         case tileType::vBat:     result.push_back('V'); break;
+         case tileType::hBat:     result.push_back('H'); break;
+         case tileType::glimmer:  result.push_back('G'); break;
+         case tileType::seeker:   result.push_back('S'); break;
+         case tileType::lurker:   result.push_back('L'); break;
+         case tileType::wanderer: result.push_back('W'); break;
+         case tileType::chaser:   result.push_back('R'); break;
+         case tileType::observer: result.push_back('0'); break;
+         case tileType::hunter:   result.push_back('h'); break;
+         case tileType::mine:     result.push_back('M'); break;
+         case tileType::death:    result.push_back('D'); break;
+         default:                 result.push_back('?'); break;
          }
       }
-      stream << "#";
+      result.push_back('#');
    }
-   return stream.str();
+   return result;
 }
 
 // Convert a string to a map for loading purposes.
-std::vector<std::vector<int>> stringToMap(std::string_view map)
-{
+std::vector<std::vector<int>> stringToMap(std::string_view map) {
    std::vector<std::vector<int>> result;
    std::vector<int> row;
 
-   for (const auto& tile : map) 
-   {
-      switch (tile)
-      {
+   for (char tile: map) {
+      switch (tile) {
       case 'E': row.push_back(int(tileType::empty)); break;
       case 'C': row.push_back(int(tileType::coin)); break;
       case 'P': row.push_back(int(tileType::player)); break;
+      case 'N': row.push_back(int(tileType::nyx)); break;
+      case 'J': row.push_back(int(tileType::jake)); break;
+      case 'g': row.push_back(int(tileType::gabriel)); break;
+      case 'B': row.push_back(int(tileType::bricks)); break;
       case 'O': row.push_back(int(tileType::obstacle)); break;
       case 'V': row.push_back(int(tileType::vBat)); break;
       case 'H': row.push_back(int(tileType::hBat)); break;
@@ -64,7 +69,9 @@ std::vector<std::vector<int>> stringToMap(std::string_view map)
       case 'W': row.push_back(int(tileType::wanderer)); break;
       case 'R': row.push_back(int(tileType::chaser)); break;
       case '0': row.push_back(int(tileType::observer)); break;
+      case 'h': row.push_back(int(tileType::hunter)); break;
       case 'M': row.push_back(int(tileType::mine)); break;
+      case 'D': row.push_back(int(tileType::death)); break;
       case '#': result.push_back(row); row.clear(); break;
       default:  row.push_back(-1); break; // Purposefuly overflow the int integer
       }

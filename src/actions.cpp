@@ -236,7 +236,6 @@ Level mainMenu(Save& save, Lua& lua, PlayerData& data)
    }
    else if (index == 0) 
    { 
-      delaySound("accent");
       println("Quitting.", BLUE); 
       exit(0); 
    }
@@ -285,7 +284,6 @@ Level mainMenu(Save& save, Lua& lua, PlayerData& data)
    }
    else if (index == 0)
    {
-      delaySound("accent");
       println("Quitting.", BLUE); 
       exit(0);
    }
@@ -399,7 +397,6 @@ Level manageSave(Save& save, Lua& lua, PlayerData& data)
    }
    else if (index == 0)
    {
-      delaySound("accent");
       println("Quitting.", BLUE); 
       exit(0);
    }
