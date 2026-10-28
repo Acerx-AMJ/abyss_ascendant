@@ -4,30 +4,30 @@
 #include <map>
 
 // User input map.
-const std::map<int8, Vec2> inputMap {{
+const std::map<int, Vec2> inputMap {{
    {'s', Vec2()}, {'w', Vec2::up}, {'e', Vec2(1, -1)}, {'d', Vec2::right}, {'c', Vec2(1)}, 
    {'x', Vec2::down}, {'z', Vec2(-1, 1)}, {'a', Vec2::left}, {'q', Vec2(-1)},
 }};
 
 // Create a new level for the user to play.
 Level::Level(
-   const str& name, 
-   const Vec2& size, 
-   uint16 index,
-   const m_uint& map,
-   const m_str& intro, 
-   const m_str& outro, 
-   const m_str& death, 
-   const m_uint& condition, 
+   const std::string& name, 
+   Vec2 size, 
+   int index,
+   const std::vector<std::vector<int>>& map,
+   const std::vector<std::vector<std::string>>& intro, 
+   const std::vector<std::vector<std::string>>& outro, 
+   const std::vector<std::vector<std::string>>& death, 
+   const std::vector<std::vector<int>>& condition, 
    PlayerData& data)
    : name(name), size(size), index(index), map(map), intro(intro), outro(outro), death(death), condition(condition), data(data)
 {
-   uint16 playerCount {};
+   int playerCount {};
 
    // Count coin and player tiles and setup the enemies.
-   for (uint16 y {}; y < size.y; y++) 
+   for (int y {}; y < size.y; y++) 
    {
-      for (uint16 x {}; x < size.x; x++) 
+      for (int x {}; x < size.x; x++) 
       {
          switch (getTile(Vec2(x, y))) 
          {
@@ -50,27 +50,27 @@ Level::Level(
    // Player count in a level can only be 1.
    if (playerCount != 1) 
    {
-      println("Fatal error: Level '"s + name + "' contains an invalid amount of players ("s + tostr(playerCount) + ")."s, RED);
+      println("Fatal error: Level '" + name + "' contains an invalid amount of players (" + tostr(playerCount) + ").", RED);
       exit(-1);
    }
 }
 
 // Move all of the enemies.
-void Level::moveEnemies(const Vec2& playerPos)
+void Level::moveEnemies(Vec2 playerPos)
 {
-   for (uint16 i {}; i < enemies.size(); i++)
+   for (int i {}; i < enemies.size(); i++)
       enemies.at(i)->move(playerPos);
 }
 
 // Set a tile to the given tile at the given position.
-void Level::setTile(const Vec2& pos, tileType tile)
+void Level::setTile(Vec2 pos, tileType tile)
 {
    if (withinBounds(pos))
-      map.at(pos.y).at(pos.x) = static_cast<uint16>(tile);
+      map.at(pos.y).at(pos.x) = static_cast<int>(tile);
 }
 
 // Get the tile from the level if it's within bounds.
-tileType Level::getTile(const Vec2& pos) const
+tileType Level::getTile(Vec2 pos) const
 {
    if (withinBounds(pos)) 
       return static_cast<tileType>(map.at(pos.y).at(pos.x));
@@ -81,8 +81,8 @@ tileType Level::getTile(const Vec2& pos) const
 // Find first tile that matches the given tile.
 Vec2 Level::findFirstTile(tileType tile) const
 {
-   for (uint16 y {}; y < size.y; y++)
-      for (uint16 x {}; x < size.x; x++)
+   for (int y {}; y < size.y; y++)
+      for (int x {}; x < size.x; x++)
          if (getTile(Vec2(x, y)) == tile) 
             return Vec2(x, y);
 
@@ -90,7 +90,7 @@ Vec2 Level::findFirstTile(tileType tile) const
 }
 
 // Move the tile to a new target destination.
-tileType Level::moveTile(const Vec2& pos, const Vec2& target, tileType type)
+tileType Level::moveTile(Vec2 pos, Vec2 target, tileType type)
 {
    const tileType currentTile {getTile(pos)};
    const tileType targetTile {getTile(target)};
@@ -102,7 +102,7 @@ tileType Level::moveTile(const Vec2& pos, const Vec2& target, tileType type)
 }
 
 // Check if the player has won the level.
-bool Level::won(const Vec2& pos)
+bool Level::won(Vec2 pos)
 {
    if (killPlayerAfterWinning() && getTile(pos) != tileType::player)
    {
@@ -136,7 +136,7 @@ bool Level::won(const Vec2& pos)
 // Display story text by text.
 void Level::story(storyType type) const
 {
-   const m_str* text;
+   const std::vector<std::vector<std::string>>* text;
 
    // Match the story type with the corresponding text.
    if (type == storyType::intro) 
@@ -147,15 +147,15 @@ void Level::story(storyType type) const
       text = &death;
 
    // Skip story if there are no items.
-   if (text->at(0).at(0) == "$SKIP"s)
+   if (text->at(0).at(0) == "$SKIP")
       return;
-   if (getHiddenInputLoud("\nStory (enter to continue, s to skip) > "s, YELLOW) == "s"s)
+   if (getHiddenInputLoud("\nStory (enter to continue, s to skip) > ", YELLOW) == "s")
       return;
 
-   uint8 path = 0;
-   std::string sound       = "click"s;
-   std::string endSound    = "accent"s;
-   std::string optionSound = "option"s;
+   int path = 0;
+   std::string sound       = "click";
+   std::string endSound    = "accent";
+   std::string optionSound = "option";
 
    // Iterate through the text
    for (const auto& entry : *text) 
@@ -171,19 +171,19 @@ void Level::story(storyType type) const
       bool onPath = (path > 0);
 
       // Set sound commands
-      if (entry.at(onPath) == "$SET_SOUND"s)
+      if (entry.at(onPath) == "$SET_SOUND")
       {
          sound = entry.at(onPath + 1);
          continue;
       }
 
-      if (entry.at(onPath) == "$SET_END_SOUND"s)
+      if (entry.at(onPath) == "$SET_END_SOUND")
       {
          endSound = entry.at(onPath + 1);
          continue;
       }
 
-      if (entry.at(onPath) == "$SET_OPTION_SOUND"s)
+      if (entry.at(onPath) == "$SET_OPTION_SOUND")
       {
          optionSound = entry.at(onPath + 1);
          continue;
@@ -192,30 +192,30 @@ void Level::story(storyType type) const
       // Default dialogue.
       if (entry.at(onPath).at(0) == '#')
       {
-         const uint8 count = entry.at(onPath).at(1) - '0';
-         v_str answers {{""s}};
+         const int count = entry.at(onPath).at(1) - '0';
+         std::vector<std::string> answers {{""}};
 
          playSound(optionSound);
-         println("\nOption:"s, YELLOW);
+         println("\nOption:", YELLOW);
 
          // Print all of the options.
-         for (uint8 i {2}; i < 2 + count; i++)
+         for (int i {2}; i < 2 + count; i++)
          {
             answers.push_back(entry.at(i + count + onPath));
-            println(" > ["s + tostr(i - 1) + "] "s + replace(entry.at(i + onPath)));
+            println(" > [" + tostr(i - 1) + "] " + replace(entry.at(i + onPath)));
          }
 
          // Get the user's option and change paths if needed.
-         uint8 answerSize = answers.size();
+         int answerSize = answers.size();
          
-         uint8 option = getNumber("\nYour choice > "s,
+         int option = getNumber("\nYour choice > ",
          [answerSize](int num) -> bool
          {
             return num >= 1 && num <= answerSize - 1;
          });
 
          playSound(sound);
-         getHiddenInput(wrap(data.name, data.color) + ": "s + replace(entry.at(1 + option + onPath)));
+         getHiddenInput(wrap(data.name, data.color) + ": " + replace(entry.at(1 + option + onPath)));
 
          if (answers.at(option).at(0) == '&')
             path = answers.at(option).at(1) - '0';
@@ -223,21 +223,21 @@ void Level::story(storyType type) const
          {
             playSound(sound);
 
-            if (entry.at(1 + onPath) == "$NAR"s)
+            if (entry.at(1 + onPath) == "$NAR")
                getHiddenInput(replace(answers.at(option)));
             else
-               getHiddenInput(entry.at(1 + onPath) + ": "s + replace(answers.at(option)));
+               getHiddenInput(entry.at(1 + onPath) + ": " + replace(answers.at(option)));
          }
       }
       else
       {
-         const str user = (entry.size() == 1 + onPath || entry.at(1 + onPath) == "$PLR"s) ? wrap(data.name, data.color) : entry.at(1 + onPath);
+         const std::string user = (entry.size() == 1 + onPath || entry.at(1 + onPath) == "$PLR") ? wrap(data.name, data.color) : entry.at(1 + onPath);
          playSound(sound);
 
-         if (user == "$NAR"s)
+         if (user == "$NAR")
             getHiddenInput(replace(entry.at(onPath)));
          else
-            getHiddenInput(user + ": "s + replace(entry.at(onPath)));
+            getHiddenInput(user + ": " + replace(entry.at(onPath)));
       }
    }
 
@@ -245,10 +245,10 @@ void Level::story(storyType type) const
 }
 
 // Print all of the level conditions to the terminal.
-void Level::printConditions(const Vec2& pos)
+void Level::printConditions(Vec2 pos)
 {
    bool valid {};
-   str info {};
+   std::string info {};
    println();
 
    for (const auto& cond : condition)
@@ -257,60 +257,60 @@ void Level::printConditions(const Vec2& pos)
       {
       case goal::getCoins: 
          valid = coins >= coinCount;
-         info = "Fragments collected: "s + tostr(coins) + "/"s + tostr(coinCount);
+         info = "Fragments collected: " + tostr(coins) + "/" + tostr(coinCount);
          break;
       case goal::someCoins:
          valid = coins >= cond.at(1);
-         info = "Fragments collected: "s + tostr(coins) + "/"s + tostr(coinCount);
+         info = "Fragments collected: " + tostr(coins) + "/" + tostr(coinCount);
          break;
       case goal::aboveX:   
          valid = pos.x >= cond.at(1);
-         info = "Be above X "s + tostr(cond.at(1));
+         info = "Be above X " + tostr(cond.at(1));
          break;
       case goal::aboveY:
          valid = pos.y <= cond.at(1) - 2;
-         info = "Be above Y "s + tostr(cond.at(1));
+         info = "Be above Y " + tostr(cond.at(1));
          break;
       case goal::belowX:
          valid = pos.x <= cond.at(1) - 2;
-         info = "Be below X "s + tostr(cond.at(1));
+         info = "Be below X " + tostr(cond.at(1));
          break;
       case goal::belowY:
          valid = pos.y >= cond.at(1);
-         info = "Be below Y "s + tostr(cond.at(1));
+         info = "Be below Y " + tostr(cond.at(1));
          break;
       case goal::point:
          valid = pos == Vec2(cond.at(1) - 1, cond.at(2) - 1);
-         info = "Be at coordinates X "s + tostr(cond.at(1)) + " Y "s + tostr(cond.at(2));
+         info = "Be at coordinates X " + tostr(cond.at(1)) + " Y " + tostr(cond.at(2));
          break;
       case goal::area:
          valid = pos.within(Vec2(cond.at(1) - 1, cond.at(2) - 1), Vec2(cond.at(3) - 1, cond.at(4) - 1));
-         info = "Be at area X "s + tostr(cond.at(1)) + " Y "s + tostr(cond.at(2)) + " to X "s + tostr(cond.at(3)) + " Y "s + tostr(cond.at(4)); 
+         info = "Be at area X " + tostr(cond.at(1)) + " Y " + tostr(cond.at(2)) + " to X " + tostr(cond.at(3)) + " Y " + tostr(cond.at(4)); 
          break;
       case goal::survive:
          valid = turn >= cond.at(1);
-         info = "Survive for "s + tostr(std::max(0U, cond.at(1) - turn)) + " more turns"s;
+         info = "Survive for " + tostr(std::max(0, cond.at(1) - turn)) + " more turns";
          break;
       case goal::turns:
          valid = turn <= cond.at(1);
-         info = "Complete in "s + tostr(cond.at(1)) + " turns (turn "s + tostr(turn) + ")"s;
+         info = "Complete in " + tostr(cond.at(1)) + " turns (turn " + tostr(turn) + ")";
 
          // Kill the player if they took too long.
          if (!valid) setTile(pos, tileType::death);
          break;
       case goal::getHit:
          valid = getTile(pos) != tileType::player;
-         info = "???"s;
+         info = "???";
          break;
       default: break;
       }
       // Print the condition
-      println((valid ? "✓ "s : "✗ "s) + info + "."s, (valid ? GREEN : RED));
+      println((valid ? "✓ " : "✗ ") + info + ".", (valid ? GREEN : RED));
    }
 }
 
 // Print the map to the terminal.
-void Level::printMap(const Vec2& pos)
+void Level::printMap(Vec2 pos)
 {
    printConditions(pos);
 
@@ -320,26 +320,26 @@ void Level::printMap(const Vec2& pos)
       {
          switch (static_cast<tileType>(tile))
          {
-         case tileType::player:   print((utf32Size(data.icon) == 1 ? " "s : ""s) + data.icon, data.color); break;
-         case tileType::empty:    print("  "s); break;
-         case tileType::coin:     print(" ○"s, YELLOW); break;
-         case tileType::nyx:      print(" ♠"s, ORANGE); break;
-         case tileType::jake:     print(" ♞"s, L_GREEN); break;
-         case tileType::gabriel:  print(" ♦"s, PURPLE); break;
-         case tileType::bricks:   print("██"s, D_BROWN); break;
-         case tileType::obstacle: print("██"s, D_GRAY); break;
-         case tileType::hBat:     print(" ═"s, RED); break;
-         case tileType::vBat:     print(" ║"s, RED); break;
-         case tileType::glimmer:  print(" ◆"s, RED); break;
-         case tileType::seeker:   print(" ◊"s, RED); break;
-         case tileType::lurker:   print(" ⯎"s, RED); break;
-         case tileType::wanderer: print(" ✡"s, RED); break;
-         case tileType::chaser:   print(" ●"s, RED); break;
-         case tileType::observer: print(" ⍙"s, RED); break;
-         case tileType::hunter:   print(" @"s, RED); break;
-         case tileType::mine:     print(" ✸"s, RED); break;
-         case tileType::death:    print(" ✖"s, RED); break;
-         default:                 print("??"s, PURPLE); break;
+         case tileType::player:   print((utf32Size(data.icon) == 1 ? " " : "") + data.icon, data.color); break;
+         case tileType::empty:    print("  "); break;
+         case tileType::coin:     print(" ○", YELLOW); break;
+         case tileType::nyx:      print(" ♠", ORANGE); break;
+         case tileType::jake:     print(" ♞", L_GREEN); break;
+         case tileType::gabriel:  print(" ♦", PURPLE); break;
+         case tileType::bricks:   print("██", D_BROWN); break;
+         case tileType::obstacle: print("██", D_GRAY); break;
+         case tileType::hBat:     print(" ═", RED); break;
+         case tileType::vBat:     print(" ║", RED); break;
+         case tileType::glimmer:  print(" ◆", RED); break;
+         case tileType::seeker:   print(" ◊", RED); break;
+         case tileType::lurker:   print(" ⯎", RED); break;
+         case tileType::wanderer: print(" ✡", RED); break;
+         case tileType::chaser:   print(" ●", RED); break;
+         case tileType::observer: print(" ⍙", RED); break;
+         case tileType::hunter:   print(" @", RED); break;
+         case tileType::mine:     print(" ✸", RED); break;
+         case tileType::death:    print(" ✖", RED); break;
+         default:                 print("??", PURPLE); break;
          }
       }
       println();
@@ -350,7 +350,7 @@ void Level::printMap(const Vec2& pos)
 // Increment the coin count by one and play a sound.
 void Level::incrementCoins()
 {
-   playSound("coin"s);
+   playSound("coin");
    coins++;
 }
 
@@ -367,12 +367,12 @@ void Level::clear() const
 }
 
 // Check if the position is within level bounds
-bool Level::withinBounds(const Vec2& pos) const
+bool Level::withinBounds(Vec2 pos) const
 {
    return pos.x >= 0 && pos.x < size.x && pos.y >= 0 && pos.y < size.y;
 }
 
-uint16 Level::getIndex() const
+int Level::getIndex() const
 {
    return index;
 }
@@ -384,23 +384,23 @@ bool Level::killPlayerAfterWinning() const
 }
 
 // Return the map for saving purposes
-const m_uint& Level::getMap() const
+const std::vector<std::vector<int>>& Level::getMap() const
 {
    return map;
 }
 
 // Replace all occurrences of $PLR to the player's username
-str Level::replace(const str& prompt) const
+std::string Level::replace(const std::string& prompt) const
 {
-   if (prompt.find("$PLR"s) == std::string::npos) 
+   if (prompt.find("$PLR") == std::string::npos) 
       return prompt;
 
-   str result {prompt};
+   std::string result {prompt};
 
    // Replace every single occurrence.
    while (true) 
    {
-      const size_t pos {result.find("$PLR"s)};
+      const size_t pos {result.find("$PLR")};
 
       if (pos == std::string::npos)
          break;
@@ -426,7 +426,7 @@ endState playLevel(Level& level)
       if (!player.isAlive()) break;
 
       // Get input from the user and do complete the action.
-      const char input {getKey("Input ('H' for help) > "s, BLUE)};
+      const char input {getKey("Input ('H' for help) > ", BLUE)};
       if (input != 'r') level.clear();
       moved = false;
 
@@ -435,32 +435,32 @@ endState playLevel(Level& level)
          moved = true;
          level.incrementTurn();
 
-         playSound("move"s);
+         playSound("move");
          player.move(inputMap.at(input));
       }
       else if (input == 'r') 
       {
-         if (getConsent("Are you sure that you want to quit? [y/n] > "s, RED))
+         if (getConsent("Are you sure that you want to quit? [y/n] > ", RED))
             return endState::quit;
 
          level.clear();
-         playSound("failure"s);
+         playSound("failure");
       }
       else if (input == 'h') 
       {
-         println("'QWEDCXZA' to move, 'S' to stay still, 'P' to see your position, 'R' to quit."s, BLUE);
-         playSound("accent"s);
+         println("'QWEDCXZA' to move, 'S' to stay still, 'P' to see your position, 'R' to quit.", BLUE);
+         playSound("accent");
       }
       else if (input == 'p') 
       {
          Vec2 pos {player.getPos()};
-         println("Your position is X "s + tostr(pos.x + 1) + ", Y "s + tostr(pos.y + 1) + "."s, BLUE);
-         playSound("accent"s);
+         println("Your position is X " + tostr(pos.x + 1) + ", Y " + tostr(pos.y + 1) + ".", BLUE);
+         playSound("accent");
       }
       else 
       {
-         println("Unknown command, type H for help."s, RED);
-         playSound("failure"s);
+         println("Unknown command, type H for help.", RED);
+         playSound("failure");
       }
    }
 
@@ -470,19 +470,19 @@ endState playLevel(Level& level)
       if (level.killPlayerAfterWinning())
       {
          level.setTile(player.getPos(), tileType::death);
-         playSound("died"s);
+         playSound("died");
       }
-      else playSound("win"s);
+      else playSound("win");
 
       level.printMap(player.getPos());
       return endState::won;
    }
    else 
    {
-      println("Input\nInfo"s);
+      println("Input\nInfo");
       level.clear();
       level.printMap(player.getPos());
-      playSound("died"s);
+      playSound("died");
    }
    return endState::lost;
 }

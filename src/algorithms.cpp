@@ -8,11 +8,11 @@
 const std::array<Vec2, 4> directions {{Vec2::up, Vec2::down, Vec2::left, Vec2::right}};
 
 // Create a new star.
-Star::Star(const Vec2& pos, uint16 gScore, uint16 hScore)
+Star::Star(Vec2 pos, int gScore, int hScore)
    : pos(pos), gScore(gScore), hScore(hScore) {}
 
 // Return the F-Score of the star.
-uint16 Star::fScore() const
+int Star::fScore() const
 {
    return gScore + hScore;
 }
@@ -24,11 +24,11 @@ bool StarCondition::operator()(const Star& first, const Star& second) const
 }
 
 // Create a new room.
-Room::Room(const Vec2& pos, const Vec2& size)
+Room::Room(Vec2 pos, Vec2 size)
    : pos(pos), size(size) {}
 
 // Create a new node.
-Node::Node(const Vec2& pos, const Vec2& size)
+Node::Node(Vec2 pos, Vec2 size)
    : pos(pos), size(size), r(nullptr), left(nullptr), right(nullptr) {}
 
 // Check if the node has no neighbors.
@@ -38,14 +38,14 @@ bool Node::isLeaf() const
 }
 
 // Create a new BSP class.
-Bsp::Bsp(const Vec2& size)
+Bsp::Bsp(Vec2 size)
    : size(size)
 {
-   map = m_uint(size.y, v_uint(size.x, uint16(tileType::empty)));
+   map = std::vector<std::vector<int>>(size.y, std::vector<int>(size.x, int(tileType::empty)));
 }
 
 // Generate a new map with random rooms.
-m_uint& Bsp::generate(uint16 roomSize)
+std::vector<std::vector<int>>& Bsp::generate(int roomSize)
 {
    Node* root = new Node(Vec2(), size);
    splitSpace(root, roomSize);
@@ -56,7 +56,7 @@ m_uint& Bsp::generate(uint16 roomSize)
 }
 
 // Recursively split the map into smaller rooms.
-void Bsp::splitSpace(Node* root, uint16 roomSize)
+void Bsp::splitSpace(Node* root, int roomSize)
 {
    if (root->size.x <= roomSize * 2 && root->size.y <= roomSize * 2) return;
    bool splitV {root->size.x > root->size.y};
@@ -64,7 +64,7 @@ void Bsp::splitSpace(Node* root, uint16 roomSize)
    if (root->size.x == root->size.y) 
       splitV = rand() % 2;
 
-   const uint16 split = splitV
+   const int split = splitV
       ? rand() % (root->size.x - roomSize * 2) + roomSize
       : rand() % (root->size.y - roomSize * 2) + roomSize;
 
@@ -93,16 +93,16 @@ void Bsp::createRooms(Node* root)
       return;
    }
 
-   const uint16 w = rand() % (std::max(1, root->size.x - 4)) + 4;
-   const uint16 h = rand() % (std::max(1, root->size.y - 4)) + 4;
-   const uint16 x = rand() % (std::max(1, root->size.x - w));
-   const uint16 y = rand() % (std::max(1, root->size.y - h));
+   const int w = rand() % (std::max(1, root->size.x - 4)) + 4;
+   const int h = rand() % (std::max(1, root->size.y - 4)) + 4;
+   const int x = rand() % (std::max(1, root->size.x - w));
+   const int y = rand() % (std::max(1, root->size.y - h));
    root->r = new Room(Vec2(root->pos.x + x, root->pos.y + y), Vec2(w, h));
 
    // Place the walls on the map.
    for (int y {root->r->pos.y}; y < root->r->pos.y + root->r->size.y; y++)
       for (int x {root->r->pos.x}; x < root->r->pos.x + root->r->size.x; x++)
-         map.at(y).at(x) = uint16((y == root->r->pos.y || y == root->r->pos.y + root->r->size.y - 1
+         map.at(y).at(x) = int((y == root->r->pos.y || y == root->r->pos.y + root->r->size.y - 1
             || x == root->r->pos.x || x == root->r->pos.x + root->r->size.x - 1) ? tileType::obstacle : tileType::empty);
 }
 
@@ -124,13 +124,13 @@ void Bsp::connectRooms(Node* root)
 
    while (point1.x != point2.x) 
    {
-      map.at(point1.y).at(point1.x) = uint16(tileType::empty);
+      map.at(point1.y).at(point1.x) = int(tileType::empty);
       point1.x += (point2.x > point1.x) ? 1 : -1;
    }
 
    while (point1.y != point2.y) 
    {
-      map.at(point1.y).at(point1.x) = uint16(tileType::empty);
+      map.at(point1.y).at(point1.x) = int(tileType::empty);
       point1.y += (point2.y > point1.y) ? 1 : -1;
    }
 }
@@ -165,22 +165,22 @@ void Bsp::deleteTree(Node* root)
 }
 
 // Calculate the H-Score for the A* pathfinding algorithm.
-uint16 calculateHScore(const Vec2& current, const Vec2& goal)
+int calculateHScore(Vec2 current, Vec2 goal)
 {
    return abs(current.x - goal.x) + abs(current.y - goal.y);
 }
 
 // Calculate the G-Score for the A* pathfinding algorithm.
-uint16 calculateGScore(const Vec2& current, const Vec2& start)
+int calculateGScore(Vec2 current, Vec2 start)
 {
    return abs(current.x - start.x) + abs(current.y - start.y);
 }
 
 // See if two points are reachable using the A* pathfinding algorithm.
-bool aStar(const Vec2& start, const Vec2& end, const m_uint& map, const Vec2& size)
+bool aStar(Vec2 start, Vec2 end, const std::vector<std::vector<int>>& map, Vec2 size)
 {
    std::priority_queue<Star, std::vector<Star>, StarCondition> stars;
-   m_boolean evaluated (size.y, v_boolean(size.x, false));
+   std::vector<std::vector<bool>> evaluated (size.y, std::vector<bool>(size.x, false));
 
    // Push the start to the stars queue.
    stars.push(Star(start, 0, calculateHScore(start, end)));
@@ -195,7 +195,7 @@ bool aStar(const Vec2& start, const Vec2& end, const m_uint& map, const Vec2& si
          continue;
 
       // Look in all 4 directions.
-      for (uint8 i {}; i < 4; i++)
+      for (int i {}; i < 4; i++)
       {
          const Vec2 pos {current.pos + directions.at(i)};
 
@@ -203,7 +203,7 @@ bool aStar(const Vec2& start, const Vec2& end, const m_uint& map, const Vec2& si
          if (pos == end)
             return true;
 
-         if (pos.x >= 0 && pos.x < size.x && pos.y >= 0 && pos.y < size.y && (map.at(pos.y).at(pos.x) == uint16(tileType::empty) || map.at(pos.y).at(pos.x) == uint16(tileType::coin)) && !evaluated.at(pos.y).at(pos.x))
+         if (pos.x >= 0 && pos.x < size.x && pos.y >= 0 && pos.y < size.y && (map.at(pos.y).at(pos.x) == int(tileType::empty) || map.at(pos.y).at(pos.x) == int(tileType::coin)) && !evaluated.at(pos.y).at(pos.x))
             stars.push(Star(pos, calculateGScore(pos, start), calculateHScore(pos, end)));
       }
 

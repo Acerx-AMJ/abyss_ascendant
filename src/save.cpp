@@ -6,7 +6,7 @@
 using std::map;
 
 // Initialize a full player data struct.
-PlayerData::PlayerData(vstr name, vstr icon, vstr color, uint64 highScore, uint16 lastClear, uint16 id)
+PlayerData::PlayerData(std::string_view name, std::string_view icon, std::string_view color, unsigned long highScore, int lastClear, int id)
    : name(name), icon(icon), color(color), highScore(highScore), lastClear(lastClear), id(id) {}
 
 // Create a new database and a new table if they do not exist yet.
@@ -15,12 +15,12 @@ Save::Save()
    std::filesystem::create_directories("data/");
    if (sqlite3_open("data/save.db", &db)) 
    {
-      println("Fatal error: Could not open save file: "s + sqlite3_errmsg(db), RED);
+      printf("%sFatal error: Could not open save file: %s\n%s ", RED, sqlite3_errmsg(db), RES);
       exit(-1);
    }
 
    // Create a new table if it does not exist.
-   cstr sql {
+   const char * sql {
       "CREATE TABLE IF NOT EXISTS SAVE("
       "ID INTEGER NOT NULL,"
       "NAME TEXT NOT NULL,"
@@ -37,7 +37,7 @@ Save::Save()
 
    if (sqlite3_exec(db, sql, nullptr, 0, &errorMsg) != SQLITE_OK) 
    {
-      println("Fatal error: Could not create table: "s + errorMsg, RED);
+      printf("%sFatal error: Could not create table: %s\n%s", RED, errorMsg, RES);
       sqlite3_free(errorMsg);
       exit(-1);
    }
@@ -53,7 +53,7 @@ Save::~Save()
 void Save::create(PlayerData& data)
 {
    // Create an SQL prepared statement.
-   cstr sql {"INSERT INTO SAVE(ID,NAME,ICON,COLOR,LAST_CLEAR,HIGH_SCORE)VALUES(?,?,?,?,1,0);"};
+   const char * sql {"INSERT INTO SAVE(ID,NAME,ICON,COLOR,LAST_CLEAR,HIGH_SCORE)VALUES(?,?,?,?,1,0);"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -64,17 +64,17 @@ void Save::create(PlayerData& data)
    sqlite3_bind_text(stmt, 4, data.color.c_str(), -1, SQLITE_STATIC);
 
    // Finalize.
-   const int32 status {sqlite3_step(stmt)};
+   const int status {sqlite3_step(stmt)};
    sqlite3_finalize(stmt);
-   handleInsertion(status, "Could not create account: "s);
+   handleInsertion(status, "Could not create account: ");
    data = selectByName(data.name);
 }
 
 // Delete a save file, return boolean based on the success.
-void Save::destroy(uint16 id)
+void Save::destroy(int id)
 {
    // Create an SQL prepared statement.
-   cstr sql {"DELETE FROM SAVE WHERE ID = ?;"};
+   const char * sql {"DELETE FROM SAVE WHERE ID = ?;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -82,16 +82,16 @@ void Save::destroy(uint16 id)
    sqlite3_bind_int(stmt, 1, id);
 
    // Finalize.
-   const int32 status {sqlite3_step(stmt)};
+   const int status {sqlite3_step(stmt)};
    sqlite3_finalize(stmt);
-   handleInsertion(status, "Could not delete save: "s);
+   handleInsertion(status, "Could not delete save: ");
 }
 
 // Update an existing save file.
-void Save::update(PlayerData& data, uint16 id)
+void Save::update(PlayerData& data, int id)
 {
    // Create an SQL prepared statement.
-   cstr sql {"UPDATE SAVE SET NAME = ?, ICON = ?, COLOR = ?, LAST_CLEAR = ?, HIGH_SCORE = ? WHERE ID = ?;"};
+   const char * sql {"UPDATE SAVE SET NAME = ?, ICON = ?, COLOR = ?, LAST_CLEAR = ?, HIGH_SCORE = ? WHERE ID = ?;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -104,16 +104,16 @@ void Save::update(PlayerData& data, uint16 id)
    sqlite3_bind_int(stmt, 6, id);
 
    // Finalize.
-   const int32 status {sqlite3_step(stmt)};
+   const int status {sqlite3_step(stmt)};
    sqlite3_finalize(stmt);
-   handleInsertion(status, "Could not update save: "s);
+   handleInsertion(status, "Could not update save: ");
 }
 
 // Increment the last cleared level by one.
-void Save::updateLevels(PlayerData& data, uint16 id)
+void Save::updateLevels(PlayerData& data, int id)
 {
    // Create an SQL prepared statement.
-   cstr sql {"UPDATE SAVE SET LAST_CLEAR = ? WHERE ID = ?;"};
+   const char * sql {"UPDATE SAVE SET LAST_CLEAR = ? WHERE ID = ?;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -122,17 +122,17 @@ void Save::updateLevels(PlayerData& data, uint16 id)
    sqlite3_bind_int(stmt, 2, id);
 
    // Finalize.
-   const int32 status {sqlite3_step(stmt)};
+   const int status {sqlite3_step(stmt)};
    sqlite3_finalize(stmt);
-   handleInsertion(status, "Could not update save: "s);
+   handleInsertion(status, "Could not update save: ");
    data.lastClear++;
 }
 
 // Update the endless mode high score.
-void Save::updateHighScore(PlayerData& data, uint64 newScore, uint16 id)
+void Save::updateHighScore(PlayerData& data, unsigned long newScore, int id)
 {
    // Create an SQL prepared statement.
-   cstr sql {"UPDATE SAVE SET HIGH_SCORE = ? WHERE ID = ?;"};
+   const char * sql {"UPDATE SAVE SET HIGH_SCORE = ? WHERE ID = ?;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -141,22 +141,22 @@ void Save::updateHighScore(PlayerData& data, uint64 newScore, uint16 id)
    sqlite3_bind_int(stmt, 2, id);
 
    // Finalize.
-   const int32 status {sqlite3_step(stmt)};
+   const int status {sqlite3_step(stmt)};
    sqlite3_finalize(stmt);
 
-   handleInsertion(status, "Could not update save: "s);
+   handleInsertion(status, "Could not update save: ");
    data.highScore = newScore;
 }
 
 // Retrieve the main account id.
-uint16 Save::retrieveMainAccount()
+int Save::retrieveMainAccount()
 {
    // Prepare sql prepared statement.
-   cstr sql {"SELECT ACC_ID FROM MAIN_ACC WHERE ID = 1;"};
+   const char * sql {"SELECT ACC_ID FROM MAIN_ACC WHERE ID = 1;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
-   uint16 id {};
+   int id {};
 
    while (sqlite3_step(stmt) == SQLITE_ROW)
       id = sqlite3_column_int(stmt, 0);
@@ -166,10 +166,10 @@ uint16 Save::retrieveMainAccount()
 }
 
 // Set the main account id.
-void Save::setMainAccount(uint16 id)
+void Save::setMainAccount(int id)
 {
    // Create an SQL prepared statement.
-   cstr sql {"INSERT OR REPLACE INTO MAIN_ACC(ID,ACC_ID)VALUES(1,?);"};
+   const char * sql {"INSERT OR REPLACE INTO MAIN_ACC(ID,ACC_ID)VALUES(1,?);"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -177,28 +177,28 @@ void Save::setMainAccount(uint16 id)
    sqlite3_bind_int(stmt, 1,id);
 
    // Finalize.
-   const int32 status {sqlite3_step(stmt)};
+   const int status {sqlite3_step(stmt)};
    sqlite3_finalize(stmt);
-   handleInsertion(status, "Could not update main account: "s);
+   handleInsertion(status, "Could not update main account: ");
 }
 
 // Get all of the available IDs that could be used.
-v_uint Save::getValidIds()
+std::vector<int> Save::getValidIds()
 {
    // Prepare sql prepared statement.
-   cstr sql {"SELECT ID FROM SAVE;"};
+   const char * sql {"SELECT ID FROM SAVE;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
-   map<uint16, bool> ids;
+   map<int, bool> ids;
 
    // Retrieve all of the data.
    while (sqlite3_step(stmt) == SQLITE_ROW)
       ids.insert({sqlite3_column_int(stmt, 0), true});
 
-   v_uint validIds;
+   std::vector<int> validIds;
    
-   for (uint16 i {1}; i <= MAX_ACCOUNTS; i++)
+   for (int i {1}; i <= MAX_ACCOUNTS; i++)
       if (!ids.count(i))
          validIds.push_back(i);
 
@@ -208,10 +208,10 @@ v_uint Save::getValidIds()
 }
 
 // Return the player's data based on the id.
-PlayerData Save::select(uint16 id)
+PlayerData Save::select(int id)
 {
    // Prepare sql prepared statement.
-   cstr sql {"SELECT * FROM SAVE WHERE ID = ?;"};
+   const char * sql {"SELECT * FROM SAVE WHERE ID = ?;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -236,10 +236,10 @@ PlayerData Save::select(uint16 id)
 }
 
 // Return the player's data based on the id.
-PlayerData Save::selectByName(const str& name)
+PlayerData Save::selectByName(const std::string& name)
 {
    // Prepare sql prepared statement.
-   cstr sql {"SELECT * FROM SAVE WHERE NAME = ?;"};
+   const char * sql {"SELECT * FROM SAVE WHERE NAME = ?;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -264,10 +264,10 @@ PlayerData Save::selectByName(const str& name)
 }
 
 // Save the endless progress, including the map and the score.
-void Save::saveEndlessProgress(const str& layout, uint64 score, uint16 id)
+void Save::saveEndlessProgress(const std::string& layout, unsigned long score, int id)
 {
    // Create an SQL prepared statement.
-   cstr sql {"INSERT INTO ENDLESS_SAVE(ID,LAYOUT,SCORE)VALUES(?,?,?);"};
+   const char * sql {"INSERT INTO ENDLESS_SAVE(ID,LAYOUT,SCORE)VALUES(?,?,?);"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -279,20 +279,20 @@ void Save::saveEndlessProgress(const str& layout, uint64 score, uint16 id)
    // Finalize.
    const int status {sqlite3_step(stmt)};
    sqlite3_finalize(stmt);
-   handleInsertion(status, "Could not create an endless save: "s);
+   handleInsertion(status, "Could not create an endless save: ");
 }
 
 // Retrieve the endless progress, both the map and the score.
-std::pair<str, uint64> Save::retrieveEndlessProgress(uint16 id)
+std::pair<std::string, unsigned long> Save::retrieveEndlessProgress(int id)
 {
     // Prepare sql prepared statement.
-   cstr sql {"SELECT * FROM ENDLESS_SAVE WHERE ID = ?;"};
+   const char * sql {"SELECT * FROM ENDLESS_SAVE WHERE ID = ?;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
    // Bind ID to the statement and return the save file if it exists.
    sqlite3_bind_int(stmt, 1, id);
-   std::pair<str, uint64> result;
+   std::pair<std::string, unsigned long> result;
 
    // Retrieve all of the data and return the latest one.
    while (sqlite3_step(stmt) == SQLITE_ROW) 
@@ -307,10 +307,10 @@ std::pair<str, uint64> Save::retrieveEndlessProgress(uint16 id)
 }
 
 // Delete the current endless save.
-void Save::deleteEndlessProgress(uint16 id)
+void Save::deleteEndlessProgress(int id)
 {
    // Create an SQL prepared statement.
-   cstr sql {"DELETE FROM ENDLESS_SAVE WHERE ID = ?;"};
+   const char * sql {"DELETE FROM ENDLESS_SAVE WHERE ID = ?;"};
    sqlite3_stmt* stmt;
    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
@@ -323,7 +323,7 @@ void Save::deleteEndlessProgress(uint16 id)
 }
 
 // Handle SQL injection errors.
-bool Save::handleInsertion(int32 status, const str& error)
+bool Save::handleInsertion(int status, const std::string& error)
 {
    if (status != SQLITE_DONE)
       println(error + sqlite3_errmsg(db), RED);

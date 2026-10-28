@@ -4,7 +4,7 @@
 #include <locale>
 
 // Wrap a string in color.
-str wrap(const str& object, const str& color)
+std::string wrap(const std::string& object, const std::string& color)
 {
    return color + object + RES;
 }
@@ -38,19 +38,19 @@ void resetTerminal()
 }
 
 // Clears all of the previous lines.
-void clearln(uint16 times)
+void clearln(int times)
 {
-   for (uint16 i {}; i < times; i++)
+   for (int i {}; i < times; i++)
    {
-      std::cout << "\r\033[K"s;
+      std::cout << "\r\033[K";
       if (i < times - 1)
-         std::cout << "\033[F"s;
+         std::cout << "\033[F";
    }
    std::cout << std::flush;
 }
 
 // Get a single character input from the user.
-char getKey(vstr prompt, vstr color) 
+char getKey(std::string_view prompt, std::string_view color) 
 {
    print(prompt, color);
    setRawMode();
@@ -85,10 +85,10 @@ char getKey()
 }
 
 // Get hidden input from the user.
-str getHiddenInputLoud(vstr prompt, vstr color)
+std::string getHiddenInputLoud(std::string_view prompt, std::string_view color)
 {
    print(prompt, color);
-   str input {};
+   std::string input {};
 
    setRawMode();
    getline(std::cin, input);
@@ -98,10 +98,10 @@ str getHiddenInputLoud(vstr prompt, vstr color)
    return input;
 }
 
-void getHiddenInput(vstr prompt, vstr color) 
+void getHiddenInput(std::string_view prompt, std::string_view color) 
 {
    print(prompt, color);
-   str input {};
+   std::string input {};
 
    setRawMode();
    getline(std::cin, input);
@@ -111,9 +111,9 @@ void getHiddenInput(vstr prompt, vstr color)
 }
 
 // Get string input from the user.
-str getInput(vstr prompt, vstr color, int16 min, int16 max, bool filter) 
+std::string getInput(std::string_view prompt, std::string_view color, int min, int max, bool filter) 
 {
-   str input {};
+   std::string input {};
    flush(prompt, color);
 
    while (true) 
@@ -128,7 +128,7 @@ str getInput(vstr prompt, vstr color, int16 min, int16 max, bool filter)
       else if (key == '!' && input.size() > 0) 
       {
          input.pop_back();
-         flush("\b \b"s);
+         flush("\b \b");
       }
       else if (input.size() < max && ((filter && (isalnum(key) || key == '_')) || !filter)) 
       {
@@ -144,10 +144,10 @@ str getInput(vstr prompt, vstr color, int16 min, int16 max, bool filter)
 }
 
 // Get number input from the user.
-int16 getNumber(vstr prompt, std::function<bool(int16)> condition) 
+int getNumber(std::string_view prompt, std::function<bool(int)> condition) 
 {
-   int16 number {};
-   str input {};
+   int number {};
+   std::string input {};
    flush(prompt);
 
    while (true) 
@@ -161,12 +161,12 @@ int16 getNumber(vstr prompt, std::function<bool(int16)> condition)
          {
             break;
          }
-         else if (key == '!'  && input.size() > 0) 
+         else if (key == '!' && input.size() > 0) 
          {
             input.pop_back();
-            flush("\b \b"s);
+            flush("\b \b");
          }
-         else if (isdigit(key) || key == '-' && input.size() == 0) 
+         else if (isdigit(key) || (key == '-' && input.size() == 0)) 
          {
             if (input.size() >= 9) 
                continue;
@@ -180,7 +180,7 @@ int16 getNumber(vstr prompt, std::function<bool(int16)> condition)
       {
          number = stoi(input);
          if (!condition(number)) 
-            throw std::out_of_range(""s);
+            throw std::out_of_range("");
 
          // Everything went successfully.
          break;
@@ -190,7 +190,7 @@ int16 getNumber(vstr prompt, std::function<bool(int16)> condition)
          input.clear();
          clearln(2);
          println();
-         flush("Invalid input, try again > "s, RED);
+         flush("Invalid input, try again > ", RED);
       }
    }
    println();
@@ -198,21 +198,21 @@ int16 getNumber(vstr prompt, std::function<bool(int16)> condition)
 }
 
 // Get consent from the user.
-bool getConsent(vstr prompt, vstr color) 
+bool getConsent(std::string_view prompt, std::string_view color) 
 {
    return getKey(prompt, color) == 'y';
 }
 
 // Make the user select an option, there's no color customization for this function.
-str getOption(const v_str& options, const v_str& values)
+std::string getOption(const std::vector<std::string>& options, const std::vector<std::string>& values)
 {
-   uint16 size = options.size();
-   println("\nOption:"s, YELLOW);
+   int size = options.size();
+   println("\nOption:", YELLOW);
 
-   for (uint16 i {}; i < size; i++)
-      println(" > ["s + str(i + 1 < 10 && i + 1 >= 0 ? " "s : ""s) + tostr(i + 1) + "] "s + options.at(i));
+   for (int i {}; i < size; i++)
+      println(" > [" + std::string(i + 1 < 10 && i + 1 >= 0 ? " " : "") + tostr(i + 1) + "] " + options.at(i));
    
-   return values.at(getNumber("\nYour choice > "s, 
+   return values.at(getNumber("\nYour choice > ", 
    [&size](int num) -> bool 
    {
       return num >= 1 && num <= size;
@@ -220,7 +220,7 @@ str getOption(const v_str& options, const v_str& values)
 }
 
 // Return the size of a string as UTF-32.
-uint16 utf32Size(const str& prompt) 
+int utf32Size(const std::string& prompt) 
 {
    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
 

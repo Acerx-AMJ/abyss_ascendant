@@ -4,17 +4,17 @@
 #include <thread>
 
 // Program entry function.
-int32 main()
+int main()
 {
    srand(time(0));
    Save save;
-   Lua lua("levels.lua"s);
+   Lua lua("levels.lua");
    PlayerData data;
 
    // Initialize audio.
    initAudio();
 
-   uint16 mainAccount {save.retrieveMainAccount()};
+   int mainAccount {save.retrieveMainAccount()};
 
    if (mainAccount == 0)
    {
@@ -34,8 +34,8 @@ int32 main()
 
       // Print the intro.
       level.story(storyType::intro);
-      getHiddenInput("(Level Start)"s);
-      playSound("click"s);
+      getHiddenInput("(Level Start)");
+      playSound("click");
       println();
 
       // Play the level and do the action based on the result.
@@ -46,17 +46,17 @@ int32 main()
          if (level.getIndex() >= data.lastClear)
             std::thread(&Save::updateLevels, &save, std::ref(data), data.id).detach();
          
-         getHiddenInput("\n(Level Complete)"s);
-         playSound("click"s);
+         getHiddenInput("\n(Level Complete)");
+         playSound("click");
          level.story(storyType::outro);
       }
       else if (result == endState::lost) 
       {
-         getHiddenInput("\n(Level Failed)"s);
-         playSound("click"s);
+         getHiddenInput("\n(Level Failed)");
+         playSound("click");
          level.story(storyType::death);
       }
-      else playSound("died"s);
+      else playSound("died");
    }
    return 0;
 }

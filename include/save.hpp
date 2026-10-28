@@ -1,32 +1,33 @@
 #ifndef AA_SAVE_HPP
 #define AA_SAVE_HPP
 
-#include "syntax.hpp"
 #include <sqlite3.h>
+#include <string>
+#include <vector>
 
 // Constants for the save class.
-inline constexpr uint16 MAX_USER_LENGTH {24};
-inline constexpr uint16 MIN_USER_LENGTH {3};
-inline constexpr uint16 MAX_ICON_LENGTH {2};
-inline constexpr uint16 MAX_ACCOUNTS {10};
+inline constexpr int MAX_USER_LENGTH {24};
+inline constexpr int MIN_USER_LENGTH {3};
+inline constexpr int MAX_ICON_LENGTH {2};
+inline constexpr int MAX_ACCOUNTS {10};
 
-inline constexpr uint16 ENDLESS_UNLOCK {9};
-inline constexpr uint16 DAILY_UNLOCK {50};
-inline constexpr uint16 COLOR_UNLOCK {100};
-inline constexpr uint16 ICON_UNLOCK {150};
+inline constexpr int ENDLESS_UNLOCK {9};
+inline constexpr int DAILY_UNLOCK {50};
+inline constexpr int COLOR_UNLOCK {100};
+inline constexpr int ICON_UNLOCK {150};
 
-inline constexpr uint16 INVALID_ID {MAX_ACCOUNTS + 1};
+inline constexpr int INVALID_ID {MAX_ACCOUNTS + 1};
 
 // Struct for saving and loading data.
 struct PlayerData 
 {
-   str name, icon, color;
-   uint64 highScore;
-   uint16 lastClear;
-   uint16 id = INVALID_ID;
+   std::string name, icon, color;
+   unsigned long highScore;
+   int lastClear;
+   int id = INVALID_ID;
 
    PlayerData() = default;
-   PlayerData(vstr name, vstr icon, vstr color, uint64 highScore, uint16 lastClear, uint16 id);
+   PlayerData(std::string_view name, std::string_view icon, std::string_view color, unsigned long highScore, int lastClear, int id);
 };
 
 // Class for saving, loading and editing player data.
@@ -38,35 +39,35 @@ public:
 
    // Create/destroy a save file.
    void create(PlayerData& data);
-   void destroy(uint16 id);
+   void destroy(int id);
 
    // Update a save file.
-   void update(PlayerData& data, uint16 id);
-   void updateLevels(PlayerData& data, uint16 id);
-   void updateHighScore(PlayerData& data, uint64 newScore, uint16 id);
+   void update(PlayerData& data, int id);
+   void updateLevels(PlayerData& data, int id);
+   void updateHighScore(PlayerData& data, unsigned long newScore, int id);
 
    // Update the main account ID or retrieve it.
-   uint16 retrieveMainAccount();
-   void setMainAccount(uint16 id);
+   int retrieveMainAccount();
+   void setMainAccount(int id);
 
    // Get all of the valid IDs that could be used.
-   v_uint getValidIds();
+   std::vector<int> getValidIds();
 
    // Select save file by id.
-   PlayerData select(uint16 id);
-   PlayerData selectByName(const str& name);
+   PlayerData select(int id);
+   PlayerData selectByName(const std::string& name);
 
    // Work with saving, retrieving or destroying endless save files.
-   void saveEndlessProgress(const str& layout, uint64 score, uint16 id);
-   std::pair<str, uint64> retrieveEndlessProgress(uint16 id);
-   void deleteEndlessProgress(uint16 id); 
+   void saveEndlessProgress(const std::string& layout, unsigned long score, int id);
+   std::pair<std::string, unsigned long> retrieveEndlessProgress(int id);
+   void deleteEndlessProgress(int id); 
 
 private:
    sqlite3* db;
    char* errorMsg;
 
    // Handle SQL injection errors.
-   bool handleInsertion(int32 status, const str& error);
+   bool handleInsertion(int status, const std::string& error);
 };
 
 #endif // AA_SAVE_HPP

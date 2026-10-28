@@ -1,81 +1,80 @@
 #ifndef AA_VEC2_HPP
 #define AA_VEC2_HPP
-
-#include "syntax.hpp"
+#include <algorithm>
 
 // Vector2 struct containing two int values.
 struct Vec2
 {
-   int16 x = 0;
-   int16 y = 0;
+   int x = 0;
+   int y = 0;
 
    // Constructors.
    constexpr Vec2()
       : x(0), y(0) {}
    
-   constexpr Vec2(int16 size)
+   constexpr Vec2(int size)
       : x(size), y(size) {}
 
-   constexpr Vec2(int16 x, int16 y)
+   constexpr Vec2(int x, int y)
       : x(x), y(y) {}
    
    // Add to X value.
-   constexpr Vec2 addX(int16 xValue) const
+   constexpr Vec2 addX(int xValue) const
    {
       return Vec2(x + xValue, y);
    }
 
    // Add to Y value.
-   constexpr Vec2 addY(int16 yValue) const
+   constexpr Vec2 addY(int yValue) const
    {
       return Vec2(x, y + yValue);
    }
 
    // Return the distance between this vector and another one.
-   constexpr int32 distanceTo(const Vec2& other) const
+   constexpr int distanceTo(Vec2 other) const
    {
       return std::max(other.x - x, x - other.x) + std::max(other.y - y, y - other.y);
    }
 
    // Check if the vec2 is withing the specified area.
-   constexpr bool within(const Vec2& point1, const Vec2& point2) const
+   constexpr bool within(Vec2 point1, Vec2 point2) const
    {
       return x >= std::min(point1.x, point2.x) && x <= std::max(point1.x, point2.x)
           && y >= std::min(point1.y, point2.y) && y <= std::max(point1.y, point2.y);
    }
 
    // Compare if two vec2 are identical.
-   constexpr bool operator==(const Vec2& other) const 
+   constexpr bool operator==(Vec2 other) const 
    {
       return x == other.x && y == other.y;
    }
 
    // Compare if two vec2 are not identical.
-   constexpr bool operator!=(const Vec2& other) const 
+   constexpr bool operator!=(Vec2 other) const 
    {
       return x != other.x || y != other.y;
    }
 
    // Add two vec2 structs together.
-   constexpr Vec2 operator+(const Vec2& other) const 
+   constexpr Vec2 operator+(Vec2 other) const 
    {
       return Vec2(x + other.x, y + other.y);
    }
 
    // Subtract two vectors
-   constexpr Vec2 operator-(const Vec2& other) const
+   constexpr Vec2 operator-(Vec2 other) const
    {
       return Vec2(x - other.x, y - other.y);
    }
 
    // Multiply a vector by a factor
-   constexpr Vec2 operator*(int16 factor) const
+   constexpr Vec2 operator*(int factor) const
    {
       return Vec2(x * factor, y * factor);
    }
 
    // Divide a vector by a factor
-   constexpr Vec2 operator/(int16 factor) const
+   constexpr Vec2 operator/(int factor) const
    {
       return Vec2(x / factor, y / factor);
    }

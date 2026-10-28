@@ -2,17 +2,18 @@
 #define AA_ALGORITHMS_HPP
 
 #include "vec2.hpp"
+#include <vector>
 
 // Struct containing the position, H-score and G-score.
 struct Star
 {
    Vec2 pos;
-   uint16 gScore, hScore;
+   int gScore, hScore;
 
-   Star(const Vec2& pos, uint16 gScore, uint16 hScore);
+   Star(Vec2 pos, int gScore, int hScore);
 
    // Return the F-Score of the star.
-   uint16 fScore() const;
+   int fScore() const;
 };
 
 // Struct for checking if the F-Score is lower than a different star.
@@ -25,7 +26,7 @@ struct StarCondition
 struct Room
 {
    Vec2 pos, size;
-   Room(const Vec2& pos, const Vec2& size);
+   Room(Vec2 pos, Vec2 size);
 };
 
 // Node struct is used to split the rooms using BSP algorithm.
@@ -36,7 +37,7 @@ struct Node
    Node* left;
    Node* right;
 
-   Node(const Vec2& pos, const Vec2& size);
+   Node(Vec2 pos, Vec2 size);
    
    // Check if the node has no neighbors.
    bool isLeaf() const;
@@ -46,11 +47,11 @@ struct Node
 class Bsp 
 {
 public:
-   Bsp(const Vec2& size);
+   Bsp(Vec2 size);
 
    // Generate a new map with random rooms.
-   m_uint& generate(uint16 roomSize);
-   void splitSpace(Node* root, uint16 roomSize);
+   std::vector<std::vector<int>>& generate(int roomSize);
+   void splitSpace(Node* root, int roomSize);
    void createRooms(Node* root);
    void connectRooms(Node* root);
 
@@ -65,14 +66,14 @@ public:
 
 private:
    Vec2 size;
-   m_uint map;
+   std::vector<std::vector<int>> map;
 };
 
 // Calculate the scores for the A* pathfinding algorithm.
-uint16 calculateHScore(const Vec2& current, const Vec2& goal);
-uint16 calculateGScore(const Vec2& current, const Vec2& start);
+int calculateHScore(Vec2 current, Vec2 goal);
+int calculateGScore(Vec2 current, Vec2 start);
 
 // See if two points are reachable using the A* pathfinding algorithm.
-bool aStar(const Vec2& start, const Vec2& end, const m_uint& map, const Vec2& size);
+bool aStar(Vec2 start, Vec2 end, const std::vector<std::vector<int>>& map, Vec2 size);
 
 #endif // AA_ALGORITHMS_HPP

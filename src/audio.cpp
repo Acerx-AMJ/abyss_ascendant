@@ -4,17 +4,15 @@
 #include <random>
 #include <unordered_map>
 
-namespace fs = std::filesystem;
-
 // Buffer storage
 static std::unordered_map<std::string, sf::SoundBuffer> audioPool;
 
 // Initialize the audio
 void initAudio()
 {
-   for (const auto& file : fs::directory_iterator("sounds/"s))
+   for (const auto& file : std::filesystem::directory_iterator("sounds/"))
    {
-      if (file.is_regular_file() && file.path().extension() == ".wav"s)
+      if (file.is_regular_file() && file.path().extension() == ".wav")
       {
          sf::SoundBuffer buffer;
 
@@ -25,7 +23,7 @@ void initAudio()
 }
 
 // Play the give audio file
-void playSound(const str& identifier)
+void playSound(const std::string& identifier)
 {
    if (!audioPool.contains(identifier)) return;
 
@@ -50,7 +48,7 @@ void playSound(const str& identifier)
 }
 
 // Delay the given audio file
-void delaySound(const str& identifier)
+void delaySound(const std::string& identifier)
 {
    if (!audioPool.contains(identifier)) return;
 

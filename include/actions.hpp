@@ -2,13 +2,13 @@
 #include "lua.hpp"
 
 // Let the user create their own color or icon.
-str createColor();
-str createIcon();
+std::string createColor();
+std::string createIcon();
 
 // Let the user decide how they'll appear in game.
-str selectColor(uint64 highScore);
-str selectIcon(uint64 highScore);
-str selectUsername(Save& save);
+std::string selectColor(unsigned long highScore);
+std::string selectIcon(unsigned long highScore);
+std::string selectUsername(Save& save);
 
 // Makes the user create a new save.
 void createSave(Save& save, PlayerData& data);

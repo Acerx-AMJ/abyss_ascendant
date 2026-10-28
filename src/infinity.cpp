@@ -6,12 +6,12 @@
 #include <thread>
 
 // Spawn rates for the endless mode.
-const std::vector<std::pair<uint16, uint8>> spawnRates {{
-   {uint16(tileType::mine), 50}, {uint16(tileType::hBat), 17}, {uint16(tileType::vBat), 17}, {uint16(tileType::glimmer), 11}, {uint16(tileType::observer), 2}, {uint16(tileType::lurker), 2}, {uint16(tileType::chaser), 1}
+const std::vector<std::pair<int, int>> spawnRates {{
+   {int(tileType::mine), 50}, {int(tileType::hBat), 17}, {int(tileType::vBat), 17}, {int(tileType::glimmer), 11}, {int(tileType::observer), 2}, {int(tileType::lurker), 2}, {int(tileType::chaser), 1}
 }};
 
 // Convert a map to string for saving purposes.
-str mapToString(const m_uint& map)
+std::string mapToString(const std::vector<std::vector<int>>& map)
 {
    std::stringstream stream;
 
@@ -21,76 +21,76 @@ str mapToString(const m_uint& map)
       {
          switch (static_cast<tileType>(tile)) 
          {
-         case tileType::empty:    stream << "E"s; break;
-         case tileType::coin:     stream << "C"s; break;
-         case tileType::player:   stream << "P"s; break;
-         case tileType::obstacle: stream << "O"s; break;
-         case tileType::vBat:     stream << "V"s; break;
-         case tileType::hBat:     stream << "H"s; break;
-         case tileType::glimmer:  stream << "G"s; break;
-         case tileType::seeker:   stream << "S"s; break;
-         case tileType::lurker:   stream << "L"s; break;
-         case tileType::wanderer: stream << "W"s; break;
-         case tileType::chaser:   stream << "R"s; break;
-         case tileType::observer: stream << "0"s; break;
-         case tileType::mine:     stream << "M"s; break;
-         default:                 stream << "?"s; break;
+         case tileType::empty:    stream << "E"; break;
+         case tileType::coin:     stream << "C"; break;
+         case tileType::player:   stream << "P"; break;
+         case tileType::obstacle: stream << "O"; break;
+         case tileType::vBat:     stream << "V"; break;
+         case tileType::hBat:     stream << "H"; break;
+         case tileType::glimmer:  stream << "G"; break;
+         case tileType::seeker:   stream << "S"; break;
+         case tileType::lurker:   stream << "L"; break;
+         case tileType::wanderer: stream << "W"; break;
+         case tileType::chaser:   stream << "R"; break;
+         case tileType::observer: stream << "0"; break;
+         case tileType::mine:     stream << "M"; break;
+         default:                 stream << "?"; break;
          }
       }
-      stream << "#"s;
+      stream << "#";
    }
    return stream.str();
 }
 
 // Convert a string to a map for loading purposes.
-m_uint stringToMap(vstr map)
+std::vector<std::vector<int>> stringToMap(std::string_view map)
 {
-   m_uint result;
-   v_uint row;
+   std::vector<std::vector<int>> result;
+   std::vector<int> row;
 
    for (const auto& tile : map) 
    {
       switch (tile)
       {
-      case 'E': row.push_back(uint16(tileType::empty)); break;
-      case 'C': row.push_back(uint16(tileType::coin)); break;
-      case 'P': row.push_back(uint16(tileType::player)); break;
-      case 'O': row.push_back(uint16(tileType::obstacle)); break;
-      case 'V': row.push_back(uint16(tileType::vBat)); break;
-      case 'H': row.push_back(uint16(tileType::hBat)); break;
-      case 'G': row.push_back(uint16(tileType::glimmer)); break;
-      case 'S': row.push_back(uint16(tileType::seeker)); break;
-      case 'L': row.push_back(uint16(tileType::lurker)); break;
-      case 'W': row.push_back(uint16(tileType::wanderer)); break;
-      case 'R': row.push_back(uint16(tileType::chaser)); break;
-      case '0': row.push_back(uint16(tileType::observer)); break;
-      case 'M': row.push_back(uint16(tileType::mine)); break;
+      case 'E': row.push_back(int(tileType::empty)); break;
+      case 'C': row.push_back(int(tileType::coin)); break;
+      case 'P': row.push_back(int(tileType::player)); break;
+      case 'O': row.push_back(int(tileType::obstacle)); break;
+      case 'V': row.push_back(int(tileType::vBat)); break;
+      case 'H': row.push_back(int(tileType::hBat)); break;
+      case 'G': row.push_back(int(tileType::glimmer)); break;
+      case 'S': row.push_back(int(tileType::seeker)); break;
+      case 'L': row.push_back(int(tileType::lurker)); break;
+      case 'W': row.push_back(int(tileType::wanderer)); break;
+      case 'R': row.push_back(int(tileType::chaser)); break;
+      case '0': row.push_back(int(tileType::observer)); break;
+      case 'M': row.push_back(int(tileType::mine)); break;
       case '#': result.push_back(row); row.clear(); break;
-      default:  row.push_back(-1); break; // Purposefuly overflow the unsigned integer
+      default:  row.push_back(-1); break; // Purposefuly overflow the int integer
       }
    }
    return result;
 }
 
 // Randomly choose an enemy based on score.
-uint16 getRandomEnemy(uint64 score, const std::vector<std::pair<uint16, uint8>>& rates)
+int getRandomEnemy(unsigned long score, const std::vector<std::pair<int, int>>& rates)
 {
-   uint16 total {};
-   v_uint weights;
+   int total {};
+   std::vector<int> weights;
 
    // Calculate weights.
    for (const auto& enemy : rates) 
    {
-      const uint16 weight = enemy.second + score / 4;
+      const int weight = enemy.second + score / 4;
       weights.push_back(weight);
       total += weight;
    }
 
-   const uint16 value = rand() % total;
-   uint16 cumulative {};
+   const int value = rand() % total;
+   int cumulative {};
 
    // Get a random value and return an enemy based on it.
-   for (uint8 i {}; i < rates.size(); i++) 
+   for (int i {}; i < rates.size(); i++) 
    {
       cumulative += weights.at(i);
 
@@ -101,14 +101,14 @@ uint16 getRandomEnemy(uint64 score, const std::vector<std::pair<uint16, uint8>>&
 }
 
 // Place coins and enemies around the map.
-void dressLevel(m_uint& map, const Vec2& size, const Vec2& player, uint16 enemies, uint16 coins, const std::vector<std::pair<uint16, uint8>>& rates, uint64 score)
+void dressLevel(std::vector<std::vector<int>>& map, Vec2 size, Vec2 player, int enemies, int coins, const std::vector<std::pair<int, int>>& rates, unsigned long score)
 {
    // Add enemies.
-   for (uint16 i {}; i < enemies; i++) {
+   for (int i {}; i < enemies; i++) {
       Vec2 target(rand() % size.x, rand() % size.y);
-      uint8 count {};
+      int count {};
 
-      while (map.at(target.y).at(target.x) != uint8(tileType::empty) || player.distanceTo(target) < 4)
+      while (map.at(target.y).at(target.x) != int(tileType::empty) || player.distanceTo(target) < 4)
       {
          target = Vec2(rand() % size.x, rand() % size.y);
          if (++count > 10) break;
@@ -119,28 +119,28 @@ void dressLevel(m_uint& map, const Vec2& size, const Vec2& player, uint16 enemie
    }
 
    // Fill the map with coins.
-   for (uint16 i {}; i < coins; i++) {
+   for (int i {}; i < coins; i++) {
       Vec2 target(rand() % size.x, rand() % size.y);
-      uint8 count {};
+      int count {};
 
-      while (map.at(target.y).at(target.x) != uint8(tileType::empty) || !aStar(player, target, map, size))
+      while (map.at(target.y).at(target.x) != int(tileType::empty) || !aStar(player, target, map, size))
       {
          target = Vec2(rand() % size.x, rand() % size.y);
          if (++count > 10) break;
       }
 
       if (count <= 10)
-         map.at(target.y).at(target.x) = uint8(tileType::coin);
+         map.at(target.y).at(target.x) = int(tileType::coin);
    }
 }
 
 // Generate a new level.
-Level generateEndless(PlayerData& data, uint64 score, bool pickedSave, vstr stringMap)
+Level generateEndless(PlayerData& data, unsigned long score, bool pickedSave, std::string_view stringMap)
 {
    if (pickedSave) 
    {
       auto map {stringToMap(stringMap)};
-      return Level(""s, Vec2(map.at(0).size(), map.size()), 0, map, story.getStory(score), {}, {}, {{uint16(goal::getCoins)}}, data);
+      return Level("", Vec2(map.at(0).size(), map.size()), 0, map, story.getStory(score), {}, {}, {{int(goal::getCoins)}}, data);
    }
 
    srand(time(0));
@@ -148,22 +148,22 @@ Level generateEndless(PlayerData& data, uint64 score, bool pickedSave, vstr stri
 
    // Generate a new map.
    Bsp bsp(size);
-   m_uint map {bsp.generate(9 - std::min(6ul, score / 6))};
+   std::vector<std::vector<int>> map {bsp.generate(9 - std::min(6ul, score / 6))};
 
    Vec2 playerPos(rand() % size.x, rand() % size.y);
 
    // Find a good place to put the player in.
-   while (map.at(playerPos.y).at(playerPos.x) != uint8(tileType::empty))
+   while (map.at(playerPos.y).at(playerPos.x) != int(tileType::empty))
       playerPos = Vec2(rand() % size.x, rand() % size.y);
 
-   const uint16 enemyCount = rand() % std::min(7ul, (score / 4) + 1) + score / 60;
-   const uint16 coinCount = rand() % std::min(12ul, (score / 4) + 1) + 3;
+   const int enemyCount = rand() % std::min(7ul, (score / 4) + 1) + score / 60;
+   const int coinCount = rand() % std::min(12ul, (score / 4) + 1) + 3;
 
    // Add the player, enemies and coins to the level.
    dressLevel(map, size, playerPos, enemyCount, coinCount, spawnRates, score);
-   map.at(playerPos.y).at(playerPos.x) = uint8(tileType::player);
+   map.at(playerPos.y).at(playerPos.x) = int(tileType::player);
 
-   return Level(""s, size, 0, map, story.getStory(score), {{"$SKIP"}}, {{"$SKIP"}}, {{uint16(goal::getCoins)}}, data);
+   return Level("", size, 0, map, story.getStory(score), {{"$SKIP"}}, {{"$SKIP"}}, {{int(goal::getCoins)}}, data);
 }
 
 // Generate the daily level for today.
@@ -173,36 +173,36 @@ Level generateDaily(PlayerData& data)
    tm* local {localtime(&now)};
 
    // Calculate the seed based on the current date.
-   const int32 seed {(local->tm_year + 1900) * 10000 + (local->tm_mon + 1) * 100 + local->tm_mday};
+   const int seed {(local->tm_year + 1900) * 10000 + (local->tm_mon + 1) * 100 + local->tm_mday};
    srand(seed);
 
    // Get the layout index, the layout and the spawn rates.
-   const uint16 index = rand() % daily.getDailyLayoutSize() + 1;
+   const int index = rand() % daily.getDailyLayoutSize() + 1;
    auto layout {daily.getDailyLayout(index)};
    auto rates {daily.getDailyRates(index)};
 
    Vec2 playerPos(rand() % layout.second.x, rand() % layout.second.y);
 
    // Find a good place to put the player in.
-   while (layout.first.at(playerPos.y).at(playerPos.x) != uint8(tileType::empty))
+   while (layout.first.at(playerPos.y).at(playerPos.x) != int(tileType::empty))
       playerPos = Vec2(rand() % layout.second.x, rand() % layout.second.y);
 
-   const uint16 enemyCount = rand() % 3 + rates.second;
-   const uint16 coinCount = rand() % 10 + 5;
+   const int enemyCount = rand() % 3 + rates.second;
+   const int coinCount = rand() % 10 + 5;
 
    // Place the player, enemies and coins around the level.
    dressLevel(layout.first, layout.second, playerPos, enemyCount, coinCount, rates.first);
-   layout.first.at(playerPos.y).at(playerPos.x) = uint8(tileType::player);
+   layout.first.at(playerPos.y).at(playerPos.x) = int(tileType::player);
 
-   return Level(""s, layout.second, 0, layout.first, {{"SKIP"s}}, {{"SKIP"s}}, {{"SKIP"s}}, {{uint16(goal::getCoins)}}, data);
+   return Level("", layout.second, 0, layout.first, {{"SKIP"}}, {{"SKIP"}}, {{"SKIP"}}, {{int(goal::getCoins)}}, data);
 }
 
 // Play endless until the player dies or quits.
 void endless(Save& save, PlayerData& data)
 {
    auto progress {save.retrieveEndlessProgress(data.id)};
-   bool pickedSave {progress.second && getConsent("Do you want to load your endless save file? ("s + wrap(tostr(progress.second), YELLOW) + " score) [y/n] > "s)};
-   uint64 score {(pickedSave ? progress.second : 0ul)};
+   bool pickedSave {progress.second && getConsent("Do you want to load your endless save file? (" + wrap(tostr(progress.second), YELLOW) + " score) [y/n] > ")};
+   unsigned long score {(pickedSave ? progress.second : 0ul)};
 
    if (progress.second) 
       clearln(2);
@@ -222,9 +222,9 @@ void endless(Save& save, PlayerData& data)
          level.story(storyType::intro);
 
       if (score == 0 || score % 5 == 0) 
-         playSound("horn"s);
+         playSound("horn");
       
-      println("\nYour current score: "s + tostr(score) + (data.highScore < score ? wrap(" New Record!"s, YELLOW) : ""s) + "\n"s);
+      println("\nYour current score: " + tostr(score) + (data.highScore < score ? wrap(" New Record!", YELLOW) : "") + "\n");
   
       // Play the level and return the result.
       endState result {playLevel(level)};
@@ -232,12 +232,12 @@ void endless(Save& save, PlayerData& data)
       if (result == endState::won) 
       {
          score++;
-         getHiddenInput("\n(Endless Level Complete) Your score: "s + tostr(score) + (data.highScore < score ? wrap(" New Record!"s, YELLOW) : ""s));
-         playSound("click"s);
+         getHiddenInput("\n(Endless Level Complete) Your score: " + tostr(score) + (data.highScore < score ? wrap(" New Record!", YELLOW) : ""));
+         playSound("click");
          clearln(4);
          level.clear();
       }
-      else if (result == endState::quit && getConsent("Do you want to save your progress? [y/n] > "s)) 
+      else if (result == endState::quit && getConsent("Do you want to save your progress? [y/n] > ")) 
       {
          save.deleteEndlessProgress(data.id);
 
@@ -246,20 +246,20 @@ void endless(Save& save, PlayerData& data)
             std::thread(&Save::updateHighScore, &save, std::ref(data), score, data.id).detach();
 
          std::thread(&Save::saveEndlessProgress, &save, mapToString(level.getMap()), score, data.id).detach();
-         playSound("success"s);
-         println("Successfuly saved endless progress."s, GREEN);
+         playSound("success");
+         println("Successfuly saved endless progress.", GREEN);
          return;
       }
       else 
       {
-         playSound("died"s);
+         playSound("died");
 
          const bool newRecord {data.highScore < score};
          if (newRecord)
             std::thread(&Save::updateHighScore, &save, std::ref(data), score, data.id).detach();
          
-         getHiddenInput("\n(Endless Level Failed) Your score: "s + tostr(score) + (newRecord ? wrap(" New Record!"s, YELLOW) : ""s));
-         playSound("click"s);
+         getHiddenInput("\n(Endless Level Failed) Your score: " + tostr(score) + (newRecord ? wrap(" New Record!", YELLOW) : ""));
+         playSound("click");
          return;
       }
    }

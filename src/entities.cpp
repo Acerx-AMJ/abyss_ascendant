@@ -4,20 +4,20 @@
 #include <cstdlib>
 
 // Create a brand new player class.
-Player::Player(Level& level, const Vec2& pos)
+Player::Player(Level& level, Vec2 pos)
    : level(level), pos(pos)
 {
    level.setTile(pos, tileType::player);
 }
 
-void Player::move(const Vec2& dir)
+void Player::move(Vec2 dir)
 {
    const Vec2 target = pos + dir;
 
    // Player tried to move outside of the map.
    if (!level.withinBounds(target)) 
    {
-      println("Cannot move outside of the map."s, RED);
+      println("Cannot move outside of the map.", RED);
       return;
    }
 
@@ -30,7 +30,7 @@ void Player::move(const Vec2& dir)
    // Handle action based on target tile.
    if ((tile < tileType::hBat && tile > tileType::player) || tile == tileType::death) 
    {
-      println("Cannot move as there's an obstacle in the way"s, RED);
+      println("Cannot move as there's an obstacle in the way", RED);
       return;
    }
    else if (tile == tileType::coin) 
@@ -48,7 +48,7 @@ void Player::move(const Vec2& dir)
    // Update position.
    level.moveTile(pos, target, tileType::empty);
    pos = target;
-   println("Moved successfully."s, GREEN);
+   println("Moved successfully.", GREEN);
 }
 
 // Check if the player is alive.
@@ -63,13 +63,13 @@ bool Player::isAlive() const
 }
 
 // Return the player's position
-const Vec2& Player::getPos() const
+Vec2 Player::getPos() const
 {
    return pos;
 }
 
 // Create a new enemy.
-Enemy::Enemy(Level& level, const Vec2& pos, tileType type)
+Enemy::Enemy(Level& level, Vec2 pos, tileType type)
    : level(level), pos(pos), type(type)
 {
    level.setTile(pos, type);
@@ -82,7 +82,7 @@ Vec2 Enemy::randomDir()
 }
 
 // Swap the tiles and update the position.
-void Enemy::moveTo(const Vec2& target)
+void Enemy::moveTo(Vec2 target)
 {
    level.setTile(pos, tile);
    tile = level.getTile(target);
@@ -92,13 +92,13 @@ void Enemy::moveTo(const Vec2& target)
 }
 
 // Check if the target is in bounds and not on another enemy
-bool Enemy::canMove(const Vec2& target) const
+bool Enemy::canMove(Vec2 target) const
 {
    return level.getTile(target) < tileType::nyx && level.withinBounds(target);
 }
 
 // Move the given enemy based on its move pattern.
-void VBat::move(const Vec2&)
+void VBat::move(Vec2)
 {
    Vec2 target {pos.addY(dir)};
 
@@ -113,7 +113,7 @@ void VBat::move(const Vec2&)
    moveTo(target);
 }
 
-void HBat::move(const Vec2&)
+void HBat::move(Vec2)
 {
    Vec2 target {pos.addX(dir)};
 
@@ -128,13 +128,13 @@ void HBat::move(const Vec2&)
    moveTo(target);
 }
 
-void Glimmer::move(const Vec2&)
+void Glimmer::move(Vec2)
 {
    const Vec2 originalDir {dir};
    Vec2 target {pos + dir};
 
    // Change the direction if Glimmer was unable to move.
-   for (uint8 i {}; i < 10 && (!canMove(target) || abs(dir.x + dir.y) != 1); i++) 
+   for (int i {}; i < 10 && (!canMove(target) || abs(dir.x + dir.y) != 1); i++) 
    {
       dir = randomDir();
       target = pos + dir;
@@ -145,7 +145,7 @@ void Glimmer::move(const Vec2&)
       moveTo(target);
 }
 
-void Seeker::move(const Vec2& player)
+void Seeker::move(Vec2 player)
 {
    if (++turn % 2 != 0) return;
    Vec2 dir;
@@ -174,7 +174,7 @@ void Seeker::move(const Vec2& player)
    moveTo(target);
 }
 
-void Chaser::move(const Vec2& player)
+void Chaser::move(Vec2 player)
 {
    if (++turn % 2 == 0) return;
    Vec2 dir;
@@ -210,7 +210,7 @@ void Chaser::move(const Vec2& player)
    }
 }
 
-void Lurker::move(const Vec2& player)
+void Lurker::move(Vec2 player)
 {
    if (++turn % 2 == 0) return;
    Vec2 target {pos};
@@ -222,7 +222,7 @@ void Lurker::move(const Vec2& player)
       return;
    }
 
-   uint8 count {};
+   int count {};
 
    // Find a valid, random position to move to. The Lurker can only attack if the
    // player is exactly a tile away.
@@ -235,10 +235,10 @@ void Lurker::move(const Vec2& player)
    moveTo(target);
 }
 
-void Wanderer::move(const Vec2&)
+void Wanderer::move(Vec2)
 {
    Vec2 target {pos};
-   uint8 count {};
+   int count {};
 
    // Generate a valid, random position that is not the current position.
    while (target == pos || !canMove(target)) 
@@ -250,7 +250,7 @@ void Wanderer::move(const Vec2&)
    moveTo(target);
 }
 
-void Observer::move(const Vec2& player)
+void Observer::move(Vec2 player)
 {
    if (pos.distanceTo(player) >= 3) return;
    Vec2 target {pos};
@@ -272,7 +272,7 @@ void Observer::move(const Vec2& player)
       moveTo(target);
 }
 
-void Hunter::move(const Vec2 &player)
+void Hunter::move(Vec2 player)
 {
    if (++turn % 4 == 0) return;
    Vec2 dir;

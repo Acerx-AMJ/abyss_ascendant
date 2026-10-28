@@ -10,16 +10,16 @@ struct Level;
 class Player
 {
 public:
-   Player(Level& level, const Vec2& pos);
+   Player(Level& level, Vec2 pos);
 
    // Move the player in the given direction if possible.
-   void move(const Vec2& dir);
+   void move(Vec2 dir);
 
    // Check if the player is alive.
    bool isAlive() const;
 
    // Return the player's position.
-   const Vec2& getPos() const;
+   Vec2 getPos() const;
 
 private:
    Level& level;
@@ -30,10 +30,10 @@ private:
 class Enemy
 {
 public:
-   Enemy(Level& level, const Vec2& pos, tileType type);
+   Enemy(Level& level, Vec2 pos, tileType type);
 
    virtual ~Enemy() = default;
-   virtual void move(const Vec2& player) = 0;
+   virtual void move(Vec2 player) = 0;
 
 protected:
    Level& level;
@@ -44,18 +44,18 @@ protected:
    Vec2 randomDir();
 
    // Swaps the tiles and sets the position to the new one.
-   void moveTo(const Vec2& target);
-   bool canMove(const Vec2& target) const;
+   void moveTo(Vec2 target);
+   bool canMove(Vec2 target) const;
 };
 
 // Vertical bat moves vertically, changing the direction on collision.
 class VBat : public Enemy
 {
 public:
-   VBat(Level& level, const Vec2& pos)
+   VBat(Level& level, Vec2 pos)
       : Enemy(level, pos, tileType::vBat) {}
    
-   void move(const Vec2&) override;
+   void move(Vec2) override;
 
 private:
    int dir {1};
@@ -65,10 +65,10 @@ private:
 class HBat : public Enemy
 {
 public:
-   HBat(Level& level, const Vec2& pos)
+   HBat(Level& level, Vec2 pos)
       : Enemy(level, pos, tileType::hBat) {}
    
-   void move(const Vec2&) override;
+   void move(Vec2) override;
 
 private:
    int dir {1};
@@ -77,10 +77,10 @@ private:
 // Glimmer moves straight in a random direction on collision.
 class Glimmer : public Enemy{
 public:
-   Glimmer(Level& level, const Vec2& pos)
+   Glimmer(Level& level, Vec2 pos)
       : Enemy(level, pos, tileType::glimmer) {}
 
-   void move(const Vec2&) override;
+   void move(Vec2) override;
 
 private:
    Vec2 dir {Vec2::down};
@@ -89,10 +89,10 @@ private:
 // Seeker slowly chases the player.
 class Seeker : public Enemy{
 public:
-   Seeker(Level& level, const Vec2& pos)
+   Seeker(Level& level, Vec2 pos)
       : Enemy(level, pos, tileType::seeker) {}
    
-   void move(const Vec2& player) override;
+   void move(Vec2 player) override;
 
 private:
    int turn {};
@@ -102,10 +102,10 @@ private:
 class Chaser : public Enemy
 {
 public:
-   Chaser(Level& level, const Vec2& pos)
+   Chaser(Level& level, Vec2 pos)
       : Enemy(level, pos, tileType::chaser) {}
    
-   void move(const Vec2& player) override;
+   void move(Vec2 player) override;
 
 private:
    int turn {};
@@ -115,10 +115,10 @@ private:
 class Lurker : public Enemy
 {
 public:
-   Lurker(Level& level, const Vec2& pos)
+   Lurker(Level& level, Vec2 pos)
       : Enemy(level, pos, tileType::lurker) {}
    
-   void move(const Vec2& player) override;
+   void move(Vec2 player) override;
 
 private:
    int turn {};
@@ -128,30 +128,30 @@ private:
 class Wanderer : public Enemy
 {
 public:
-   Wanderer(Level& level, const Vec2& pos)
+   Wanderer(Level& level, Vec2 pos)
       : Enemy(level, pos, tileType::wanderer) {}
    
-   void move(const Vec2&) override;
+   void move(Vec2) override;
 };
 
 // Observer only moves if the player is in range.
 class Observer : public Enemy
 {
 public:
-   Observer(Level& level, const Vec2& pos)
+   Observer(Level& level, Vec2 pos)
       : Enemy(level, pos, tileType::observer) {}
    
-   void move(const Vec2& player) override;
+   void move(Vec2 player) override;
 };
 
 // Hunter is a more aggressive version of seeker
 class Hunter : public Enemy
 {
 public:
-   Hunter(Level &level, const Vec2 &pos)
+   Hunter(Level &level, Vec2 pos)
       : Enemy(level, pos, tileType::hunter) {}
    
-   void move(const Vec2 &player) override;
+   void move(Vec2 player) override;
 
 private:
    int turn {};
