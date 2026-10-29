@@ -1,4 +1,5 @@
-# Abyss Ascendant
+![Logo](logo.png)
+
 This project contains the Abyss Ascendant game's source-code, the level data and the level editor. The level editor can be found in `editor` folder and is made with pure HTML/CSS/JS. It can be hosted easily. The `script` folder contains all of the game data in Lua, including levels, story and endless mode. All variables are found in [script/variables.lua](script/variables.lua). The game itself is made with C++ and saves data with SQLite3.
 
 ![Screenshot of the game](screenshot.png)
