@@ -120,9 +120,8 @@ bool Level::won(Vec2 pos)
       case goal::turns:      if (turn > cond.at(1))       return false; break;
       case goal::aboveX:     if (pos.x <= cond.at(1) - 1) return false; break;
       case goal::aboveY:     if (pos.y >= cond.at(1) - 1) return false; break;
-      case goal::belowX:    if (pos.x >= cond.at(1) - 1) return false; break;
-      case goal::belowY:    if (pos.y <= cond.at(1) - 1) return false; break;
-
+      case goal::belowX:     if (pos.x >= cond.at(1) - 1) return false; break;
+      case goal::belowY:     if (pos.y <= cond.at(1) - 1) return false; break;
       case goal::point:  if (pos != Vec2(cond.at(1) - 1, cond.at(2) - 1)) return false; break;
       case goal::area:   if (!pos.within(Vec2(cond.at(1) - 1, cond.at(2) - 1), Vec2(cond.at(3) - 1, cond.at(4) - 1))) return false; break;
       case goal::getHit: return false;
@@ -134,113 +133,136 @@ bool Level::won(Vec2 pos)
 }
 
 // Display story text by text.
-void Level::story(storyType type) const
-{
-   const std::vector<std::vector<std::string>>* text;
+void Level::story(storyType type) const {
+   const std::vector<std::vector<std::string>> *text;
+   const char *storyName;
 
-   // Match the story type with the corresponding text.
-   if (type == storyType::intro) 
+   if (type == storyType::intro) {
       text = &intro;
-   else if (type == storyType::outro) 
+      storyName = "intro";
+   }
+   else if (type == storyType::outro) {
       text = &outro;
-   else if (type == storyType::death) 
+      storyName = "outro";
+   }
+   else if (type == storyType::death) {
       text = &death;
-
-   // Skip story if there are no items.
-   if (text->at(0).at(0) == "$SKIP")
-      return;
-   if (getHiddenInputLoud("\nStory (enter to continue, s to skip) > ", YELLOW) == "s")
-      return;
-
-   int path = 0;
-   std::string sound       = "click";
-   std::string endSound    = "accent";
-   std::string optionSound = "option";
-
-   // Iterate through the text
-   for (const auto& entry : *text) 
-   {
-      // Path has merged into the default path.
-      if (entry.at(0).at(0) != '&')
-         path = 0;
-
-      // Skip other paths dialogue.
-      if (entry.at(0).at(0) == '&' && entry.at(0).at(1) - '0' != path) 
-         continue;
-
-      bool onPath = (path > 0);
-
-      // Set sound commands
-      if (entry.at(onPath) == "$SET_SOUND")
-      {
-         sound = entry.at(onPath + 1);
-         continue;
-      }
-
-      if (entry.at(onPath) == "$SET_END_SOUND")
-      {
-         endSound = entry.at(onPath + 1);
-         continue;
-      }
-
-      if (entry.at(onPath) == "$SET_OPTION_SOUND")
-      {
-         optionSound = entry.at(onPath + 1);
-         continue;
-      }
-
-      // Default dialogue.
-      if (entry.at(onPath).at(0) == '#')
-      {
-         const int count = entry.at(onPath).at(1) - '0';
-         std::vector<std::string> answers {{""}};
-
-         playSound(optionSound);
-         println("\nOption:", YELLOW);
-
-         // Print all of the options.
-         for (int i {2}; i < 2 + count; i++)
-         {
-            answers.push_back(entry.at(i + count + onPath));
-            println(" > [" + tostr(i - 1) + "] " + replace(entry.at(i + onPath)));
-         }
-
-         // Get the user's option and change paths if needed.
-         int answerSize = answers.size();
-         
-         int option = getNumber("\nYour choice > ",
-         [answerSize](int num) -> bool
-         {
-            return num >= 1 && num <= answerSize - 1;
-         });
-
-         playSound(sound);
-         getHiddenInput(wrap(data.name, data.color) + ": " + replace(entry.at(1 + option + onPath)));
-
-         if (answers.at(option).at(0) == '&')
-            path = answers.at(option).at(1) - '0';
-         else
-         {
-            playSound(sound);
-
-            if (entry.at(1 + onPath) == "$NAR")
-               getHiddenInput(replace(answers.at(option)));
-            else
-               getHiddenInput(entry.at(1 + onPath) + ": " + replace(answers.at(option)));
-         }
-      }
-      else
-      {
-         const std::string user = (entry.size() == 1 + onPath || entry.at(1 + onPath) == "$PLR") ? wrap(data.name, data.color) : entry.at(1 + onPath);
-         playSound(sound);
-
-         if (user == "$NAR")
-            getHiddenInput(replace(entry.at(onPath)));
-         else
-            getHiddenInput(user + ": " + replace(entry.at(onPath)));
-      }
+      storyName = "death";
    }
 
+   // skip the story
+   if (text->empty()) {
+      return;
+   }
+
+   if (getHiddenInputLoud("\nStory (enter to continue, s to skip) > ", YELLOW) == "s") {
+      return;
+   }
+
+   // display the story
+   int path = 0;
+   std::string sound = "click";
+   std::string endSound = "accent";
+   std::string optionSound = "option";
+
+   for (const std::vector<std::string> &entry: *text) {
+      if (entry.empty()) {
+         continue;
+      }
+
+      if (!entry[0].empty() && entry[0][0] != '&') {
+         path = 0;
+      }
+
+      if (entry[0].size() > 1 && entry[0][0] == '&') {
+         std::string substr = entry[0].substr(1);
+         int entryPath = 0;
+         try { entryPath = std::stoi(substr); }
+         catch (...) {
+            printf("%slevels.lua@%s.%s: Invalid path '%s'.%s\n", RED, name.c_str(), storyName, entry[0].c_str(), RES);
+            continue;
+         }
+
+         if (entryPath != path) {
+            continue;
+         }
+      }
+
+      bool onPath = (path > 0);
+      if (entry.size() <= onPath) {
+         continue;
+      }
+
+      // commands
+      if (entry[onPath].size() == 2 + onPath && entry[onPath] == "$SET_SOUND") {
+         sound = entry[onPath + 1];
+         continue;
+      }
+
+      if (entry[onPath].size() == 2 + onPath && entry[onPath] == "$SET_END_SOUND") {
+         endSound = entry[onPath + 1];
+         continue;
+      }
+
+      if (entry[onPath].size() == 2 + onPath && entry[onPath] == "$SET_OPTION_SOUND") {
+         optionSound = entry[onPath + 1];
+         continue;
+      }
+
+      // dialogue options
+      if (entry[onPath].size() > 1 && entry[onPath][0] == '#') {
+         std::string substr = entry[onPath].substr(1);
+         int options = 0;
+         try { options = std::stoi(substr); }
+         catch (...) {
+            printf("%slevels.lua@%s.%s: Invalid dialogue option count '%s'.%s\n", RED, name.c_str(), storyName, entry[onPath].c_str(), RES);
+            continue;
+         }
+
+         int start = 2 + onPath;
+         int expectedCount = start + options * 2;
+         if (entry.size() != (size_t)expectedCount) {
+            printf("%slevels.lua@%s.%s: Expected %d entries, got %zu instead.%s\n", RED, name.c_str(), storyName, expectedCount, entry.size(), RES);
+            continue;
+         }
+
+         playSound(optionSound);
+         printf("\n%sOption:%s\n", YELLOW, RES);
+
+         for (int i = start; i < start + options; ++i) {
+            printf(" > [%2d] %s\n", (i - start) + 1, replace(entry[i]).c_str());
+         }
+
+         int selected = getNumber("\nYour choice > ", [options](int num) -> bool {
+            return num >= 1 && num <= options;
+         }) - 1;
+
+         const std::string &selectedEntry = entry[start + selected];
+         const std::string &answerEntry = entry[start + options + selected];
+
+         playSound(sound);
+         getHiddenInput(wrap(data.name, data.color) + ": " + replace(selectedEntry));
+
+         if (answerEntry.size() > 1 && answerEntry[0] == '&') {
+            std::string substr = answerEntry.substr(1);
+            try { path = std::stoi(substr); }
+            catch (...) {
+               printf("%slevels.lua@%s.%s: Invalid path in dialogue answer '%s'.%s\n", RED, name.c_str(), storyName, entry[0].c_str(), RES);
+            }
+         }
+         else {
+            const std::string prompt = (entry[onPath + 1] == "$NAR" ? "" : entry[onPath + 1] + ": ") + replace(answerEntry);
+            playSound(sound);
+            getHiddenInput(prompt);
+         }
+      }
+      else {
+         const std::string user = (entry.size() == 1 + onPath || entry[onPath + 1] == "$PLR") ? wrap(data.name, data.color) : entry[onPath + 1];
+         const std::string prompt = (user == "$NAR" ? "" : user + ": ") + replace(entry[onPath]);
+         playSound(sound);
+         getHiddenInput(prompt);
+      }
+   }
    playSound(endSound);
 }
 

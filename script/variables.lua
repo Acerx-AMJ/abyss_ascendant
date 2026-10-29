@@ -7,7 +7,6 @@ end
 SET_SOUND        = "$SET_SOUND"
 SET_END_SOUND    = "$SET_END_SOUND"
 SET_OPTION_SOUND = "$SET_OPTION_SOUND"
-SKIP             = "$SKIP"
 
 ONE       = "#1"
 TWO       = "#2"

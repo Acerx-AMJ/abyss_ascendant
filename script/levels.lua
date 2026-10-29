@@ -66,7 +66,7 @@ Levels = {
          {PLR .. ".", PLR},
          {"Alright, let's continue.", NYX},
       },
-      death = {{SKIP}},
+      death = {},
       goal = {{COINS}, {ABOVE_Y, 2}},
    },
    {
@@ -110,7 +110,7 @@ Levels = {
             "Otherworldly.", "Bad things.", "Leave that to me."},
          {"Wow.", PLR},
       },
-      death = {{SKIP}},
+      death = {},
       goal = {{COINS}, {ABOVE_X, 23}},
    },
    {
