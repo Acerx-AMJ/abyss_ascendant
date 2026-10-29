@@ -152,9 +152,6 @@ public:
       : Enemy(level, pos, tileType::hunter) {}
    
    void move(Vec2 player) override;
-
-private:
-   int turn {};
 };
 
 #endif // AA_ENTITIES_HPP

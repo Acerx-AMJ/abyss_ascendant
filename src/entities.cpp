@@ -274,7 +274,6 @@ void Observer::move(Vec2 player)
 
 void Hunter::move(Vec2 player)
 {
-   if (++turn % 4 == 0) return;
    Vec2 dir;
 
    // Calculate the direction in which the seeker should move.
